@@ -1,0 +1,4341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#eef3f8">
+    <meta name="description"
+        content="Aadi — an AI agency building custom AI agents and automation systems. Where the next age begins.">
+    <title>Aadi — Where the Next Age Begins</title>
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 12 L11 40 M24 12 L37 40 M16.5 31 L31.5 31' stroke='%23182741' stroke-width='4' stroke-linecap='round' fill='none'/%3E%3Ccircle cx='24' cy='5.5' r='3' fill='%23e08b2d'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/instrument-serif@latest/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/instrument-serif@latest/italic.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@latest/400.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@latest/500.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@latest/600.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@latest/400.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@latest/500.css">
+    <style>
+        /* ============ TOKENS — "SKY & EMBER" ============ */
+        :root {
+            --paper: #eef3f8;
+            --paper2: #e2eaf2;
+            --card: #f9fbfe;
+            --platebg: #f4ecdd;
+            --ink: #182741;
+            --ink2: #4a5b78;
+            --ink3: #8493ab;
+            --line: rgba(24, 39, 65, .14);
+            --line2: rgba(24, 39, 65, .28);
+            --gold: #c26a1f;
+            --gold2: #e08b2d;
+            --goldsoft: rgba(224, 139, 45, .15);
+            --night: #0b1220;
+            --serif: 'Instrument Serif', Georgia, serif;
+            --sans: 'Inter', system-ui, sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+            --d-fast: 150ms;
+            --d-base: 300ms;
+            --d-reveal: 550ms;
+            --ease: cubic-bezier(.2, .65, .25, 1);
+            --ease-soft: cubic-bezier(.2, .7, .3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            background: var(--paper);
+            color: var(--ink);
+            font-family: var(--sans);
+            font-size: 16px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden
+        }
+
+        ::selection {
+            background: var(--gold2);
+            color: #241505
+        }
+
+        img {
+            display: block;
+            max-width: 100%
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none
+        }
+
+        button {
+            font-family: inherit;
+            color: inherit
+        }
+
+        em {
+            font-family: var(--serif);
+            font-style: italic;
+            font-weight: 400
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            pointer-events: none;
+            opacity: .045;
+            mix-blend-mode: multiply;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
+        }
+
+        .page {
+            display: none
+        }
+
+        .page.active {
+            display: block;
+            animation: pageIn .55s cubic-bezier(.2, .65, .25, 1) both
+        }
+
+        @keyframes pageIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        /* ============ NAV (always legible — frosted bar solves top-section contrast) ============ */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px clamp(20px, 4vw, 52px);
+            background: rgba(238, 243, 248, .82);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid var(--line);
+            transition: box-shadow var(--d-base)
+        }
+
+        .nav.scrolled {
+            box-shadow: 0 14px 40px -22px rgba(24, 39, 65, .28)
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .brand .mark {
+            width: 34px;
+            height: 34px;
+            color: var(--ink)
+        }
+
+        .brand .wm {
+            font-family: var(--serif);
+            font-size: 25px
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 26px;
+            align-items: center
+        }
+
+        .nav-links>a,
+        .mm-trigger {
+            font-size: 13px;
+            color: var(--ink2);
+            transition: color var(--d-base);
+            position: relative;
+            padding: 6px 0;
+            background: none;
+            border: none;
+            cursor: pointer
+        }
+
+        .nav-links>a:hover,
+        .mm-trigger:hover {
+            color: var(--ink)
+        }
+
+        .nav-links>a.active {
+            color: var(--ink)
+        }
+
+        .nav-links>a.active::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: -3px;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--gold2);
+            transform: translateX(-50%)
+        }
+
+        .mm {
+            position: relative
+        }
+
+        .mm-trigger .caret {
+            display: inline-block;
+            margin-left: 5px;
+            transition: transform var(--d-base);
+            font-size: 9px
+        }
+
+        .mm.open .mm-trigger {
+            color: var(--ink)
+        }
+
+        .mm.open .caret {
+            transform: rotate(180deg)
+        }
+
+        .mm-panel {
+            position: absolute;
+            top: calc(100% + 18px);
+            left: 50%;
+            transform: translateX(-50%) translateY(8px);
+            background: var(--card);
+            border: 1px solid var(--line2);
+            border-radius: 20px;
+            box-shadow: 0 34px 90px -30px rgba(24, 39, 65, .4);
+            padding: 26px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--d-base) ease, transform var(--d-base) ease, visibility var(--d-base);
+            z-index: 990
+        }
+
+        .mm.open .mm-panel {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0)
+        }
+
+        .mm-panel .p-title {
+            font-family: var(--mono);
+            font-size: 9.5px;
+            letter-spacing: .3em;
+            color: var(--ink3);
+            text-transform: uppercase;
+            margin-bottom: 16px
+        }
+
+        .mm-services .mm-panel {
+            width: min(860px, 92vw);
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px
+        }
+
+        .mm-services .p-title,
+        .mm-work .p-title {
+            grid-column: 1/-1
+        }
+
+        .mm-card {
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: var(--paper);
+            padding: 18px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: transform var(--d-base), border-color var(--d-base)
+        }
+
+        .mm-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--gold2)
+        }
+
+        .mm-card svg {
+            width: 22px;
+            height: 22px;
+            color: var(--gold)
+        }
+
+        .mm-card b {
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: 1.05rem
+        }
+
+        .mm-card span {
+            font-size: 11.5px;
+            color: var(--ink2);
+            line-height: 1.5
+        }
+
+        .mm-work .mm-panel {
+            width: min(620px, 92vw);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px
+        }
+
+        .mm-work .mm-card strong {
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: 1.3rem;
+            color: var(--gold)
+        }
+
+        .mm-journey .mm-panel {
+            width: min(880px, 94vw)
+        }
+
+        .jstrip-nav {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+            flex-wrap: wrap
+        }
+
+        .jchip {
+            flex: 1;
+            min-width: 92px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: var(--paper);
+            padding: 14px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            text-align: center;
+            transition: transform var(--d-base), border-color var(--d-base)
+        }
+
+        .jchip:hover {
+            transform: translateY(-3px);
+            border-color: var(--gold2)
+        }
+
+        .jchip svg {
+            width: 22px;
+            height: 22px;
+            color: var(--gold)
+        }
+
+        .jchip b {
+            font-size: 11px;
+            font-weight: 600
+        }
+
+        .jchip span {
+            font-family: var(--mono);
+            font-size: 8.5px;
+            letter-spacing: .14em;
+            color: var(--ink3)
+        }
+
+        .jarrow {
+            align-self: center;
+            color: var(--ink3);
+            font-size: 11px
+        }
+
+        .btn-line {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--ink);
+            border: 1px solid var(--line2);
+            border-radius: 999px;
+            padding: 9px 22px;
+            transition: background var(--d-base), color var(--d-base), border-color var(--d-base)
+        }
+
+        .btn-line:hover {
+            background: var(--ink);
+            color: var(--paper);
+            border-color: var(--ink)
+        }
+
+        .btn-dark {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--ink);
+            color: var(--paper);
+            border: none;
+            border-radius: 999px;
+            padding: 15px 32px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform var(--d-base), box-shadow var(--d-base), background var(--d-base), color var(--d-base)
+        }
+
+        .btn-dark:hover {
+            transform: translateY(-2px);
+            background: var(--gold);
+            color: #241505;
+            box-shadow: 0 14px 40px -12px rgba(194, 106, 31, .5)
+        }
+
+        .burger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            position: relative;
+            z-index: 1150
+        }
+
+        .burger i {
+            position: absolute;
+            left: 8px;
+            right: 8px;
+            height: 2px;
+            background: var(--ink);
+            transition: transform var(--d-base), top var(--d-base)
+        }
+
+        .burger i:first-child {
+            top: 15px
+        }
+
+        .burger i:last-child {
+            top: 24px
+        }
+
+        body.menu-open .burger i:first-child {
+            top: 19px;
+            transform: rotate(45deg)
+        }
+
+        body.menu-open .burger i:last-child {
+            top: 19px;
+            transform: rotate(-45deg)
+        }
+
+        .mnav {
+            position: fixed;
+            inset: 0;
+            background: var(--paper);
+            z-index: 1100;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 32px;
+            transform: translateY(-102%);
+            transition: transform .55s cubic-bezier(.2, .65, .25, 1)
+        }
+
+        body.menu-open .mnav {
+            transform: none
+        }
+
+        .mnav a.top {
+            font-family: var(--serif);
+            font-size: 1.9rem;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            justify-content: space-between
+        }
+
+        .mnav a.top small {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .3em;
+            color: var(--gold)
+        }
+
+        .acc-btn {
+            width: 100%;
+            background: none;
+            border: none;
+            border-bottom: 1px solid var(--line);
+            padding: 14px 0;
+            font-family: var(--serif);
+            font-size: 1.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer
+        }
+
+        .acc-btn .fx {
+            color: var(--gold);
+            transition: transform var(--d-base);
+            font-size: 1.4rem
+        }
+
+        .acc.open .fx {
+            transform: rotate(45deg)
+        }
+
+        .acc-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height var(--d-base) ease
+        }
+
+        .acc-body a {
+            display: block;
+            padding: 12px 6px;
+            font-size: 14px;
+            color: var(--ink2);
+            border-bottom: 1px dashed var(--line)
+        }
+
+        @media(max-width:960px) {
+            .nav-links {
+                display: none
+            }
+
+            .burger {
+                display: block
+            }
+        }
+
+        /* ============ HERO CINEMA (refined) ============ */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            min-height: 100svh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .cinema {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            transition: opacity 1.2s ease
+        }
+
+        .hero.done .cinema {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1.2s ease, visibility 0s 1.2s
+        }
+
+        .cine-prog {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            height: 2px;
+            width: 100%;
+            background: linear-gradient(90deg, var(--gold2), #f2b45c);
+            transform-origin: left;
+            transform: scaleX(0);
+            animation: prog 10.5s var(--ease) both;
+            z-index: 5
+        }
+
+        @keyframes prog {
+            to {
+                transform: scaleX(1)
+            }
+        }
+
+        .scene {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 22px;
+            will-change: opacity, transform
+        }
+
+        .s-svg {
+            width: min(52vw, 340px);
+            height: auto;
+            overflow: visible;
+            animation: drift 11s var(--ease) infinite alternate;
+            will-change: transform
+        }
+
+        .s-cap {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .34em;
+            color: var(--ink3);
+            text-transform: uppercase
+        }
+
+        .s1 {
+            background: var(--night);
+            animation: w1 10.5s var(--ease) both
+        }
+
+        .s1 .s-cap {
+            color: #b99a63
+        }
+
+        .s2 {
+            animation: w2 10.5s var(--ease) both;
+            background: radial-gradient(120% 90% at 50% 38%, #2a1a0c 0%, #120b05 72%)
+        }
+
+        .s3 {
+            animation: w3 10.5s var(--ease) both;
+            background: #e7ddc8
+        }
+
+        .s4 {
+            animation: w4 10.5s var(--ease) both;
+            background: radial-gradient(120% 90% at 50% 38%, #16243c 0%, #0b1220 72%)
+        }
+
+        .s5 {
+            animation: w5 10.5s var(--ease) both;
+            background: var(--night)
+        }
+
+        .s5 .s-cap {
+            color: #b99a63
+        }
+
+        .s6 {
+            animation: w6 10.5s var(--ease) both;
+            background: radial-gradient(120% 90% at 50% 38%, #17263f 0%, #0b1220 72%)
+        }
+
+        .s7 {
+            animation: w7 10.5s var(--ease) both
+        }
+
+        .s2 .s-cap { color: #c89a68 }
+        .s4 .s-cap, .s6 .s-cap { color: #aeb9cf }
+
+        @keyframes w1 {
+            0% {
+                opacity: 0;
+                transform: scale(1.02)
+            }
+
+            3% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            13% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            16% {
+                opacity: 0;
+                transform: scale(.98)
+            }
+
+            100% {
+                opacity: 0
+            }
+        }
+
+        @keyframes w2 {
+
+            0%,
+            14% {
+                opacity: 0;
+                transform: scale(1.02)
+            }
+
+            17% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            28% {
+                opacity: 1
+            }
+
+            31% {
+                opacity: 0;
+                transform: scale(.98)
+            }
+
+            100% {
+                opacity: 0
+            }
+        }
+
+        @keyframes w3 {
+
+            0%,
+            29% {
+                opacity: 0;
+                transform: scale(1.02)
+            }
+
+            32% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            43% {
+                opacity: 1
+            }
+
+            46% {
+                opacity: 0;
+                transform: scale(.98)
+            }
+
+            100% {
+                opacity: 0
+            }
+        }
+
+        @keyframes w4 {
+
+            0%,
+            44% {
+                opacity: 0;
+                transform: scale(1.02)
+            }
+
+            47% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            58% {
+                opacity: 1
+            }
+
+            61% {
+                opacity: 0;
+                transform: scale(.98)
+            }
+
+            100% {
+                opacity: 0
+            }
+        }
+
+        @keyframes w5 {
+
+            0%,
+            59% {
+                opacity: 0;
+                transform: translateY(12px)
+            }
+
+            62% {
+                opacity: 1;
+                transform: translateY(0)
+            }
+
+            74% {
+                opacity: 1
+            }
+
+            77% {
+                opacity: 0;
+                transform: translateY(-10px)
+            }
+
+            100% {
+                opacity: 0
+            }
+        }
+
+        @keyframes w6 {
+
+            0%,
+            75% {
+                opacity: 0;
+                transform: scale(1.02)
+            }
+
+            78% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            90% {
+                opacity: 1
+            }
+
+            93% {
+                opacity: 0
+            }
+
+            100% {
+                opacity: 0
+            }
+        }
+
+        @keyframes w7 {
+
+            0%,
+            91% {
+                opacity: 0;
+                transform: scale(1.04)
+            }
+
+            95% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+        }
+
+        @keyframes drift {
+            from { transform: translate3d(-6px, 5px, 0) scale(1); }
+            to { transform: translate3d(6px, -6px, 0) scale(1.03); }
+        }
+
+        /* s1 spark */
+        .spark-core {
+            animation: flick .8s ease-in-out infinite alternate
+        }
+
+        @keyframes flick {
+            from {
+                opacity: .75;
+                transform: scale(.9)
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1.12)
+            }
+        }
+
+        .rays {
+            transform-origin: 100px 100px;
+            animation: raysIn 1.2s .3s cubic-bezier(.2, .7, .3, 1) both
+        }
+
+        @keyframes raysIn {
+            from {
+                opacity: 0;
+                transform: scale(.5) rotate(-14deg)
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) rotate(0)
+            }
+        }
+
+        .ember {
+            animation: emberUp 1.6s ease-in infinite
+        }
+
+        .ember.e2 {
+            animation-delay: .5s
+        }
+
+        .ember.e3 {
+            animation-delay: 1s
+        }
+
+        @keyframes emberUp {
+            0% {
+                transform: translateY(0);
+                opacity: 0
+            }
+
+            18% {
+                opacity: .9
+            }
+
+            100% {
+                transform: translateY(-46px);
+                opacity: 0
+            }
+        }
+
+        /* s2 fire */
+        .flame-o {
+            transform-origin: 100px 106px;
+            animation: flameF .7s ease-in-out infinite alternate
+        }
+
+        .flame-i {
+            transform-origin: 100px 104px;
+            animation: flameF .5s .1s ease-in-out infinite alternate
+        }
+
+        @keyframes flameF {
+            from {
+                transform: scaleY(.94) scaleX(1.04)
+            }
+
+            to {
+                transform: scaleY(1.09) scaleX(.96)
+            }
+        }
+
+        .fig {
+            opacity: 0;
+            animation: figIn .9s ease both
+        }
+
+        .fig.f1 {
+            animation-delay: 1.8s
+        }
+
+        .fig.f2 {
+            animation-delay: 2.05s
+        }
+
+        .fig.f3 {
+            animation-delay: 2.3s
+        }
+
+        @keyframes figIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        /* s3 hand */
+        .hand {
+            opacity: 0;
+            animation: figIn .7s 3.2s ease both
+        }
+
+        .wallstroke {
+            stroke-dasharray: 160;
+            stroke-dashoffset: 160;
+            animation: draw 1.2s ease both
+        }
+
+        .ws1 {
+            animation-delay: 3.45s
+        }
+
+        .ws2 {
+            animation-delay: 3.9s
+        }
+
+        .ws3 {
+            animation-delay: 4.25s
+        }
+
+        @keyframes draw {
+            to {
+                stroke-dashoffset: 0
+            }
+        }
+
+        /* s5 rocket */
+        .rocketg {
+            animation: rise 1.9s 6.25s var(--ease) both
+        }
+
+        @keyframes rise {
+            from {
+                transform: translateY(78px)
+            }
+
+            to {
+                transform: translateY(-150px)
+            }
+        }
+
+        .exhaust {
+            transform-origin: 100px 100px;
+            animation: flameF .18s ease-in-out infinite alternate
+        }
+
+        .puff {
+            animation: puff 1.4s ease-out infinite
+        }
+
+        .puff.p2 {
+            animation-delay: .45s
+        }
+
+        .puff.p3 {
+            animation-delay: .9s
+        }
+
+        @keyframes puff {
+            0% {
+                transform: translateY(0) scale(.5);
+                opacity: .7
+            }
+
+            100% {
+                transform: translateY(26px) scale(1.5);
+                opacity: 0
+            }
+        }
+
+        .twinkle {
+            animation: flick 1.4s ease-in-out infinite alternate
+        }
+
+        /* s6 */
+        .s6 .orb-wrap {
+            position: relative
+        }
+
+        .s6 .plate-img,
+        .s6 .plate-svg {
+            width: min(50vw, 320px);
+            height: auto;
+            display: block;
+            aspect-ratio: 4/5;
+            object-fit: cover;
+            border-radius: 999px 999px 16px 16px;
+            border: 1px solid var(--line2);
+            animation: kb 2.2s 7.9s ease both;
+            box-shadow: 0 30px 80px -30px rgba(11, 18, 32, .5)
+        }
+
+        @keyframes kb {
+            from {
+                transform: scale(1.12)
+            }
+
+            to {
+                transform: scale(1)
+            }
+        }
+
+        .s6 .orbit {
+            position: absolute;
+            inset: -9%;
+            animation: spinO 9s linear infinite
+        }
+
+        @keyframes spinO {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        /* s7 */
+        .wm7 {
+            font-family: var(--serif);
+            font-size: clamp(4rem, 14vw, 9rem);
+            position: relative;
+            animation: wmIn .8s 9.5s cubic-bezier(.2, .7, .3, 1) both
+        }
+
+        @keyframes wmIn {
+            from {
+                opacity: 0;
+                transform: translateY(26px);
+                letter-spacing: .06em
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+                letter-spacing: -.01em
+            }
+        }
+
+        .wm7 .wm-dot {
+            position: absolute;
+            top: -.05em;
+            left: .2em;
+            width: .05em;
+            height: .05em;
+            border-radius: 50%;
+            background: var(--gold2);
+            box-shadow: 0 0 .12em .04em rgba(224, 139, 45, .7)
+        }
+
+        .wm7 svg {
+            position: absolute;
+            left: .02em;
+            bottom: -.28em;
+            width: .96em;
+            height: .2em;
+            overflow: visible
+        }
+
+        .wm7 svg path {
+            stroke: var(--gold2);
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-dasharray: 120;
+            stroke-dashoffset: 120;
+            animation: draw 1s 9.9s ease both
+        }
+
+        .s7 .s-cap {
+            animation: figIn .8s 10s both
+        }
+
+        /* reduced / static */
+        .hero.static .scene {
+            animation: none !important;
+            opacity: 0
+        }
+
+        .hero.static .scene * {
+            animation: none !important
+        }
+
+        .hero.static .s6 {
+            opacity: 1
+        }
+
+        .hero-copy {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            padding: 90px 24px 40px;
+            opacity: 0;
+            transform: translateY(26px);
+            transition: opacity var(--d-reveal) ease .2s, transform var(--d-reveal) ease .2s
+        }
+
+        .hero.done .hero-copy {
+            opacity: 1;
+            transform: none
+        }
+
+        .hero-copy .eyebrow {
+            justify-content: center
+        }
+
+        .hero-copy .eyebrow::after {
+            content: "";
+            width: 26px;
+            height: 1px;
+            background: var(--gold);
+            opacity: .7
+        }
+
+        .hero-copy h1 {
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: clamp(2.7rem, 6.4vw, 5.2rem);
+            line-height: 1.04;
+            margin-top: 22px
+        }
+
+        .hero-copy .sub {
+            margin: 22px auto 0;
+            max-width: 52ch;
+            color: var(--ink2)
+        }
+
+        .hero-copy .ctas {
+            margin-top: 36px;
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap
+        }
+
+        .hero-stack {
+            margin-top: 28px;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--ink3)
+        }
+
+        .hero-stack b {
+            color: var(--gold);
+            font-weight: 500;
+            margin-right: 4px
+        }
+
+        .hero-stack span {
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 6px 12px;
+            background: var(--card)
+        }
+
+        /* ============ SHARED ============ */
+        .wrap {
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 0 clamp(20px, 4vw, 52px)
+        }
+
+        .sec {
+            padding: clamp(90px, 12vh, 150px) 0;
+            position: relative
+        }
+
+        .eyebrow {
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: .34em;
+            text-transform: uppercase;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 14px
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 26px;
+            height: 1px;
+            background: var(--gold);
+            opacity: .7
+        }
+
+        .h2 {
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: clamp(2.1rem, 4.6vw, 3.6rem);
+            line-height: 1.08;
+            letter-spacing: -.01em;
+            margin-top: 22px
+        }
+
+        .lede {
+            margin-top: 22px;
+            max-width: 56ch;
+            color: var(--ink2);
+            font-size: 16px
+        }
+
+        [data-reveal] {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity var(--d-reveal) ease, transform var(--d-reveal) var(--ease);
+            transition-delay: var(--d, 0s)
+        }
+
+        [data-reveal].in {
+            opacity: 1;
+            transform: none
+        }
+
+        .pagehead {
+            padding: clamp(140px, 20vh, 200px) 0 40px;
+            text-align: center
+        }
+
+        .pagehead .lede {
+            margin-left: auto;
+            margin-right: auto
+        }
+
+        .cta-band {
+            padding: 14vh 24px;
+            text-align: center;
+            background: radial-gradient(60vmax 40vmax at 50% 120%, var(--goldsoft), transparent 70%)
+        }
+
+        .cta-band .lede {
+            margin-left: auto;
+            margin-right: auto
+        }
+
+        .cta-band .ctas {
+            margin-top: 40px;
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap
+        }
+
+        .marquee {
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+            overflow: hidden;
+            padding: 16px 0;
+            background: var(--card)
+        }
+
+        .marquee-track {
+            display: flex;
+            gap: 56px;
+            width: max-content;
+            animation: mar 32s linear infinite
+        }
+
+        .marquee span {
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: .3em;
+            color: var(--ink2);
+            text-transform: uppercase;
+            white-space: nowrap
+        }
+
+        .marquee b {
+            color: var(--gold);
+            font-weight: 500
+        }
+
+        @keyframes mar {
+            to {
+                transform: translateX(-50%)
+            }
+        }
+
+        .agent-band {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(40px, 6vw, 90px);
+            align-items: center
+        }
+
+        .console {
+            background: #101a2c;
+            border: 1px solid rgba(224, 139, 45, .45);
+            border-radius: 16px;
+            box-shadow: 0 34px 90px -34px rgba(24, 39, 65, .55);
+            overflow: hidden;
+            font-family: var(--mono);
+            transform: rotate(.6deg)
+        }
+
+        .console-bar {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(238, 243, 248, .09)
+        }
+
+        .console-bar i {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: rgba(238, 243, 248, .16)
+        }
+
+        .console-bar i:first-child {
+            background: var(--gold2)
+        }
+
+        .console-bar span {
+            margin-left: 8px;
+            font-size: 10px;
+            letter-spacing: .24em;
+            color: rgba(238, 243, 248, .5);
+            text-transform: uppercase
+        }
+
+        .console-bar .live {
+            margin-left: auto;
+            color: #9fd0a8;
+            font-size: 9px;
+            letter-spacing: .2em
+        }
+
+        .console-bar .live::before {
+            content: "●";
+            margin-right: 6px;
+            animation: blink 1.6s infinite
+        }
+
+        .console-body {
+            padding: 20px 20px 26px;
+            min-height: 236px;
+            font-size: 12.5px;
+            line-height: 2;
+            color: #dbe6f4;
+            white-space: pre-wrap
+        }
+
+        .cl-cmd {
+            color: #f0c083
+        }
+
+        .cl-ok {
+            color: #9fd0a8
+        }
+
+        .cl-warn {
+            color: #eb9a6b
+        }
+
+        .typing::after {
+            content: "▌";
+            color: var(--gold2);
+            animation: blink 1s steps(1) infinite
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0
+            }
+        }
+
+        @media(max-width:900px) {
+            .agent-band {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .svc-cards {
+            margin-top: 64px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px
+        }
+
+        .svc-card {
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: var(--card);
+            padding: 30px 26px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            transition: transform var(--d-base), border-color var(--d-base), box-shadow var(--d-base)
+        }
+
+        .svc-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--gold2);
+            box-shadow: 0 26px 60px -30px rgba(24, 39, 65, .35)
+        }
+
+        .svc-card .no {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .26em;
+            color: var(--gold)
+        }
+
+        .svc-card h3 {
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: 1.45rem
+        }
+
+        .svc-card p {
+            color: var(--ink2);
+            font-size: 13.5px;
+            flex: 1
+        }
+
+        .svc-card a {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .2em;
+            color: var(--gold);
+            text-transform: uppercase
+        }
+
+        @media(max-width:980px) {
+            .svc-cards {
+                grid-template-columns: 1fr 1fr
+            }
+        }
+
+        @media(max-width:620px) {
+            .svc-cards {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .jteaser {
+            background: var(--paper2);
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line)
+        }
+
+        .jteaser-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: clamp(40px, 6vw, 90px);
+            align-items: center
+        }
+
+        .jstrip {
+            display: flex;
+            gap: 16px;
+            justify-content: center
+        }
+
+        .jstrip .mini {
+            width: 23%;
+            aspect-ratio: 4/5;
+            object-fit: cover;
+            border-radius: 999px 999px 12px 12px;
+            border: 1px solid var(--line2);
+            box-shadow: 0 18px 44px -22px rgba(24, 39, 65, .4)
+        }
+
+        @media(max-width:900px) {
+            .jteaser-grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .builds {
+            margin-top: 64px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 26px
+        }
+
+        .build {
+            border: 1px solid var(--line2);
+            border-radius: 20px;
+            background: var(--card);
+            padding: clamp(30px, 3.4vw, 46px);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            position: relative;
+            transition: transform var(--d-base), box-shadow var(--d-base)
+        }
+
+        .build:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 70px -34px rgba(24, 39, 65, .4)
+        }
+
+        .build::after {
+            content: "✦";
+            position: absolute;
+            top: 26px;
+            right: 30px;
+            color: var(--gold);
+            opacity: .6
+        }
+
+        .build-no {
+            font-family: var(--mono);
+            font-size: 11px;
+            letter-spacing: .26em;
+            color: var(--gold)
+        }
+
+        .build h3 {
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: clamp(1.6rem, 2.6vw, 2.1rem)
+        }
+
+        .build p {
+            color: var(--ink2);
+            font-size: 14.5px
+        }
+
+        .chips {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px
+        }
+
+        .chips li {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            color: var(--ink2);
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 7px 13px
+        }
+
+        .build-stat {
+            margin-top: auto;
+            padding-top: 22px;
+            border-top: 1px solid var(--line);
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            flex-wrap: wrap
+        }
+
+        .build-stat strong {
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: 1.6rem;
+            color: var(--gold)
+        }
+
+        .build-stat span {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .18em;
+            color: var(--ink3);
+            text-transform: uppercase
+        }
+
+        .build-link {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .2em;
+            color: var(--gold);
+            text-transform: uppercase
+        }
+
+        @media(max-width:900px) {
+            .builds {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .team-teaser {
+            display: flex;
+            align-items: center;
+            gap: 26px;
+            flex-wrap: wrap;
+            margin-top: 56px
+        }
+
+        .medals {
+            display: flex
+        }
+
+        .medal {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 1px solid var(--line2);
+            background: var(--card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--serif);
+            font-size: 24px;
+            color: var(--gold);
+            margin-left: -14px;
+            transition: transform var(--d-base)
+        }
+
+        .medal:first-child {
+            margin-left: 0
+        }
+
+        .medal:hover {
+            transform: translateY(-4px)
+        }
+
+        /* ============ JOURNEY MIND MAP ============ */
+        .mindmap {
+            position: relative;
+            max-width: 1160px;
+            margin: 0 auto;
+            padding: 50px 20px 40px
+        }
+
+        .spine {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            transform: translateX(-50%);
+            background: repeating-linear-gradient(to bottom, var(--line2) 0 7px, transparent 7px 16px)
+        }
+
+        .mnode {
+            position: relative;
+            width: 50%;
+            padding: 0 64px 10vh 20px
+        }
+
+        .mnode.right {
+            margin-left: 50%;
+            padding: 0 20px 10vh 64px
+        }
+
+        .mdot {
+            position: absolute;
+            top: 64px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--paper);
+            border: 2px solid var(--gold2);
+            box-shadow: 0 0 0 6px var(--paper);
+            z-index: 3
+        }
+
+        .mnode.left .mdot {
+            right: -8px
+        }
+
+        .mnode.right .mdot {
+            left: -8px
+        }
+
+        .branch {
+            position: absolute;
+            top: 56px;
+            width: 64px;
+            height: 44px;
+            color: var(--line2)
+        }
+
+        .mnode.left .branch {
+            right: 0
+        }
+
+        .mnode.right .branch {
+            left: 0;
+            transform: scaleX(-1)
+        }
+
+        .mcard {
+            border: 1px solid var(--line2);
+            border-radius: 18px;
+            background: var(--card);
+            padding: 26px;
+            box-shadow: 0 24px 60px -30px rgba(24, 39, 65, .35);
+            transition: transform var(--d-base), border-color var(--d-base);
+            cursor: pointer
+        }
+
+        .mcard:hover {
+            transform: translateY(-4px);
+            border-color: var(--gold2)
+        }
+
+        .mcard .plate {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/10;
+            overflow: hidden;
+            border-radius: 200px 200px 14px 14px;
+            border: 1px solid var(--line2);
+            background: var(--platebg)
+        }
+
+        .mcard .plate img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover
+        }
+
+        .mcard .yr {
+            display: block;
+            margin-top: 18px;
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .3em;
+            color: var(--gold);
+            text-transform: uppercase
+        }
+
+        .mcard h3 {
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: 1.7rem;
+            margin-top: 8px
+        }
+
+        .mcard .short {
+            margin-top: 8px;
+            color: var(--ink2);
+            font-size: 14px
+        }
+
+        .mcard .more {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height var(--d-reveal) ease, opacity var(--d-reveal) ease;
+            color: var(--ink2);
+            font-size: 13.5px
+        }
+
+        .mnode:hover .more,
+        .mnode.open .more {
+            max-height: 240px;
+            opacity: 1
+        }
+
+        .mcard .more p {
+            padding-top: 12px;
+            border-top: 1px dashed var(--line);
+            margin-top: 12px
+        }
+
+        .mhint {
+            display: block;
+            margin-top: 14px;
+            font-family: var(--mono);
+            font-size: 9px;
+            letter-spacing: .26em;
+            color: var(--ink3);
+            text-transform: uppercase
+        }
+
+        .mnode.pulse .mcard {
+            animation: pglow 1.1s ease 2
+        }
+
+        @keyframes pglow {
+
+            0%,
+            100% {
+                box-shadow: 0 24px 60px -30px rgba(24, 39, 65, .35)
+            }
+
+            50% {
+                box-shadow: 0 0 0 14px rgba(224, 139, 45, .28)
+            }
+        }
+
+        .mnode.terminal {
+            width: auto;
+            margin: 20px auto 0;
+            padding: 0 20px;
+            text-align: center
+        }
+
+        .mnode.terminal .mdot {
+            left: 50%;
+            top: -8px;
+            transform: translateX(-50%)
+        }
+
+        .tcard {
+            border: 1px solid var(--gold2);
+            border-radius: 24px;
+            background: var(--card);
+            padding: 56px 30px;
+            box-shadow: 0 30px 80px -34px rgba(24, 39, 65, .4)
+        }
+
+        .tcard .mark-big {
+            width: 110px;
+            height: 110px;
+            color: var(--ink);
+            margin: 0 auto
+        }
+
+        .tcard h3 {
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-top: 18px
+        }
+
+        .tcard p {
+            margin: 14px auto 0;
+            max-width: 52ch;
+            color: var(--ink2)
+        }
+
+        .tcard .ctas {
+            margin-top: 30px;
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap
+        }
+
+        @media(max-width:880px) {
+            .spine {
+                left: 26px;
+                transform: none
+            }
+
+            .mnode,
+            .mnode.right {
+                width: auto;
+                margin: 0;
+                padding: 0 12px 9vh 58px
+            }
+
+            .mnode.left .mdot,
+            .mnode.right .mdot {
+                left: -39px;
+                right: auto
+            }
+
+            .branch {
+                display: none
+            }
+
+            .mnode.terminal {
+                padding: 0 12px 0 58px
+            }
+
+            .mnode.terminal .mdot {
+                left: -39px;
+                transform: none
+            }
+        }
+
+        /* ============ SERVICES / WORK / ABOUT / CONTACT ============ */
+        .svc {
+            display: grid;
+            grid-template-columns: 110px 1.1fr 1fr;
+            gap: clamp(28px, 4vw, 56px);
+            padding: 60px 0;
+            border-bottom: 1px solid var(--line)
+        }
+
+        .svc:first-of-type {
+            border-top: 1px solid var(--line)
+        }
+
+        .svc-no {
+            font-family: var(--serif);
+            font-size: 2.6rem;
+            color: var(--gold2)
+        }
+
+        .svc h3 {
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: clamp(1.7rem, 2.8vw, 2.3rem)
+        }
+
+        .svc .desc {
+            margin-top: 14px;
+            color: var(--ink2);
+            font-size: 15px
+        }
+
+        .svc ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-self: center
+        }
+
+        .svc ul li {
+            display: flex;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--ink2)
+        }
+
+        .svc ul li::before {
+            content: "✦";
+            color: var(--gold);
+            flex: none
+        }
+
+        @media(max-width:900px) {
+            .svc {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .process {
+            margin-top: 80px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px
+        }
+
+        .step {
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: var(--card);
+            padding: 28px 24px;
+            transition: transform var(--d-base), border-color var(--d-base)
+        }
+
+        .step:hover {
+            transform: translateY(-4px);
+            border-color: var(--gold2)
+        }
+
+        .step .s-no {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .26em;
+            color: var(--gold)
+        }
+
+        .step h4 {
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: 1.4rem;
+            margin: 12px 0 10px
+        }
+
+        .step p {
+            color: var(--ink2);
+            font-size: 13.5px
+        }
+
+        .step .wk {
+            margin-top: 16px;
+            display: inline-block;
+            font-family: var(--mono);
+            font-size: 9.5px;
+            letter-spacing: .2em;
+            color: var(--ink3);
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 6px 12px;
+            text-transform: uppercase
+        }
+
+        @media(max-width:980px) {
+            .process {
+                grid-template-columns: 1fr 1fr
+            }
+        }
+
+        @media(max-width:560px) {
+            .process {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .stack {
+            margin-top: 64px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center
+        }
+
+        .stack span {
+            font-family: var(--mono);
+            font-size: 10.5px;
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--ink2);
+            border: 1px solid var(--line2);
+            border-radius: 999px;
+            padding: 10px 18px;
+            background: var(--card);
+            transition: border-color var(--d-base), color var(--d-base)
+        }
+
+        .stack span:hover {
+            border-color: var(--gold);
+            color: var(--gold)
+        }
+
+        .faq {
+            max-width: 820px;
+            margin: 64px auto 0
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--line)
+        }
+
+        .faq-q {
+            width: 100%;
+            background: none;
+            border: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 26px 4px;
+            font-family: var(--serif);
+            font-size: 1.3rem;
+            color: var(--ink);
+            cursor: pointer;
+            text-align: left
+        }
+
+        .faq-q .fx {
+            font-size: 1.4rem;
+            color: var(--gold);
+            transition: transform var(--d-base);
+            flex: none
+        }
+
+        .faq-item.open .fx {
+            transform: rotate(45deg)
+        }
+
+        .faq-a {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height var(--d-base) ease
+        }
+
+        .faq-a p {
+            padding: 0 4px 28px;
+            color: var(--ink2);
+            font-size: 14.5px;
+            max-width: 64ch
+        }
+
+        .case {
+            display: grid;
+            grid-template-columns: .9fr 1.1fr;
+            gap: clamp(36px, 5vw, 80px);
+            align-items: start;
+            padding: 70px 0;
+            border-bottom: 1px solid var(--line)
+        }
+
+        .case:first-of-type {
+            border-top: 1px solid var(--line)
+        }
+
+        .case:nth-of-type(even) .case-visual {
+            order: 2
+        }
+
+        .case-visual {
+            border: 1px solid var(--line2);
+            border-radius: 20px;
+            background: var(--card);
+            padding: 44px 34px;
+            text-align: center
+        }
+
+        .case-visual .big {
+            font-family: var(--serif);
+            font-size: 5rem;
+            color: var(--gold2);
+            line-height: 1
+        }
+
+        .case-visual .cap {
+            margin-top: 10px;
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .3em;
+            color: var(--ink3);
+            text-transform: uppercase
+        }
+
+        .case-visual svg {
+            margin: 26px auto 0;
+            display: block;
+            color: var(--ink3)
+        }
+
+        .case h3 {
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: clamp(1.8rem, 3vw, 2.5rem)
+        }
+
+        .case .tagline {
+            margin-top: 8px;
+            font-family: var(--serif);
+            font-style: italic;
+            color: var(--gold);
+            font-size: 1.1rem
+        }
+
+        .case p {
+            margin-top: 16px;
+            color: var(--ink2);
+            font-size: 15px
+        }
+
+        .stat-grid {
+            margin-top: 28px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px
+        }
+
+        .stat {
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 16px 14px;
+            background: var(--card)
+        }
+
+        .stat strong {
+            display: block;
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: 1.35rem;
+            color: var(--gold)
+        }
+
+        .stat span {
+            font-family: var(--mono);
+            font-size: 9px;
+            letter-spacing: .16em;
+            color: var(--ink3);
+            text-transform: uppercase
+        }
+
+        .index {
+            margin-top: 70px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 60px
+        }
+
+        .index a {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 20px 6px;
+            border-bottom: 1px solid var(--line);
+            font-size: 14.5px;
+            color: var(--ink2);
+            transition: color var(--d-base), padding var(--d-base)
+        }
+
+        .index a:hover {
+            color: var(--gold);
+            padding-left: 14px
+        }
+
+        .index a b {
+            font-family: var(--mono);
+            font-weight: 500;
+            font-size: 10px;
+            letter-spacing: .2em;
+            color: var(--ink3)
+        }
+
+        @media(max-width:900px) {
+            .case {
+                grid-template-columns: 1fr
+            }
+
+            .case:nth-of-type(even) .case-visual {
+                order: 0
+            }
+
+            .index {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .story-grid {
+            display: grid;
+            grid-template-columns: 1.05fr .95fr;
+            gap: clamp(40px, 6vw, 90px);
+            align-items: center
+        }
+
+        .story-img {
+            border: 1px solid var(--line2);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 30px 70px -34px rgba(24, 39, 65, .4)
+        }
+
+        .story-img figcaption {
+            padding: 14px 20px;
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .26em;
+            color: var(--ink3);
+            text-transform: uppercase;
+            background: var(--card);
+            border-top: 1px solid var(--line)
+        }
+
+        @media(max-width:900px) {
+            .story-grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .mark-band {
+            background: var(--paper2);
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line)
+        }
+
+        .mark-stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center
+        }
+
+        .mark-big {
+            width: 170px;
+            height: 170px;
+            color: var(--ink)
+        }
+
+        .meanings {
+            margin-top: 60px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            width: 100%
+        }
+
+        .meaning {
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: var(--card);
+            padding: 30px 26px;
+            text-align: left
+        }
+
+        .meaning .m-ic {
+            width: 44px;
+            height: 44px;
+            color: var(--gold)
+        }
+
+        .meaning h4 {
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: 1.35rem;
+            margin: 16px 0 10px
+        }
+
+        .meaning p {
+            color: var(--ink2);
+            font-size: 13.5px
+        }
+
+        @media(max-width:860px) {
+            .meanings {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .variants {
+            margin-top: 26px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            width: 100%
+        }
+
+        .variant {
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: var(--card);
+            padding: 36px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            transition: border-color var(--d-base)
+        }
+
+        .variant:hover {
+            border-color: var(--gold2)
+        }
+
+        .variant .v-label {
+            font-family: var(--mono);
+            font-size: 9.5px;
+            letter-spacing: .3em;
+            color: var(--ink3);
+            text-transform: uppercase
+        }
+
+        .variant .v-mark {
+            width: 64px;
+            height: 64px;
+            color: var(--ink)
+        }
+
+        .variant .v-word {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .variant .v-word .mark {
+            width: 34px;
+            height: 34px;
+            color: var(--ink)
+        }
+
+        .variant .v-word span {
+            font-family: var(--serif);
+            font-size: 30px
+        }
+
+        .variant .v-seal {
+            width: 110px;
+            height: 110px;
+            color: var(--ink)
+        }
+
+        @media(max-width:860px) {
+            .variants {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .values {
+            margin-top: 64px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px
+        }
+
+        .value {
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: var(--card);
+            padding: 32px 28px
+        }
+
+        .value b {
+            font-family: var(--mono);
+            font-weight: 500;
+            font-size: 10px;
+            letter-spacing: .26em;
+            color: var(--gold)
+        }
+
+        .value h4 {
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: 1.4rem;
+            margin: 14px 0 10px
+        }
+
+        .value p {
+            color: var(--ink2);
+            font-size: 14px
+        }
+
+        @media(max-width:860px) {
+            .values {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .members {
+            margin-top: 64px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px
+        }
+
+        .member {
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            padding: 38px 32px;
+            background: var(--card);
+            transition: border-color var(--d-base), transform var(--d-base)
+        }
+
+        .member:hover {
+            border-color: var(--gold2);
+            transform: translateY(-4px)
+        }
+
+        .member-mark {
+            width: 62px;
+            height: 62px;
+            border-radius: 50%;
+            border: 1px solid var(--line2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--serif);
+            font-size: 26px;
+            color: var(--gold);
+            position: relative;
+            margin-bottom: 26px;
+            background: var(--paper2)
+        }
+
+        .member-mark::after {
+            content: "";
+            position: absolute;
+            top: -3px;
+            right: -2px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--gold2);
+            box-shadow: 0 0 8px 2px rgba(224, 139, 45, .5)
+        }
+
+        .member h3 {
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: 1.5rem
+        }
+
+        .member .role {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .24em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin: 10px 0 16px
+        }
+
+        .member .bio {
+            color: var(--ink2);
+            font-size: 14px
+        }
+
+        @media(max-width:860px) {
+            .members {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: clamp(48px, 7vw, 110px)
+        }
+
+        .contact-side {
+            display: flex;
+            flex-direction: column;
+            gap: 26px
+        }
+
+        .c-item b {
+            display: block;
+            font-family: var(--mono);
+            font-weight: 500;
+            font-size: 10px;
+            letter-spacing: .26em;
+            color: var(--ink3);
+            text-transform: uppercase;
+            margin-bottom: 8px
+        }
+
+        .c-item a {
+            color: var(--gold);
+            font-size: 15px;
+            border-bottom: 1px solid rgba(194, 106, 31, .4);
+            padding-bottom: 3px
+        }
+
+        .c-item p {
+            color: var(--ink2);
+            font-size: 14.5px
+        }
+
+        .next-steps {
+            border: 1px solid var(--line);
+            border-radius: 18px;
+            background: var(--card);
+            padding: 28px
+        }
+
+        .next-steps h4 {
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: 1.3rem;
+            margin-bottom: 16px
+        }
+
+        .next-steps ol {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 14px
+        }
+
+        .next-steps li {
+            display: flex;
+            gap: 14px;
+            font-size: 13.5px;
+            color: var(--ink2)
+        }
+
+        .next-steps li i {
+            font-style: normal;
+            font-family: var(--mono);
+            font-size: 10px;
+            color: var(--gold);
+            border: 1px solid rgba(194, 106, 31, .4);
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: none
+        }
+
+        .budget {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 6px
+        }
+
+        .budget button {
+            font-family: var(--mono);
+            font-size: 10.5px;
+            letter-spacing: .14em;
+            border: 1px solid var(--line2);
+            background: none;
+            border-radius: 999px;
+            padding: 10px 16px;
+            color: var(--ink2);
+            cursor: pointer;
+            transition: all var(--d-base)
+        }
+
+        .budget button.sel {
+            background: var(--ink);
+            color: var(--paper);
+            border-color: var(--ink)
+        }
+
+        .field {
+            margin-bottom: 28px
+        }
+
+        .field label {
+            display: block;
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .26em;
+            text-transform: uppercase;
+            color: var(--ink3);
+            margin-bottom: 10px
+        }
+
+        .field input,
+        .field textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--line2);
+            color: var(--ink);
+            font-family: var(--sans);
+            font-size: 15.5px;
+            padding: 10px 2px 14px;
+            outline: none;
+            transition: border-color var(--d-base);
+            resize: vertical
+        }
+
+        .field input:focus,
+        .field textarea:focus {
+            border-color: var(--gold)
+        }
+
+        .form-done {
+            display: none;
+            border: 1px solid var(--gold2);
+            border-radius: 18px;
+            padding: 44px;
+            background: var(--goldsoft)
+        }
+
+        .form-done.show {
+            display: block;
+            animation: fadeUp .8s cubic-bezier(.2, .65, .25, 1)
+        }
+
+        .form-done h3 {
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: 1.8rem;
+            margin-bottom: 12px
+        }
+
+        .form-done p {
+            color: var(--ink2);
+            font-size: 14.5px
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        @media(max-width:900px) {
+            .contact-grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        footer {
+            background: var(--ink);
+            color: var(--paper);
+            padding: 64px 0 46px
+        }
+
+        .foot {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 36px;
+            flex-wrap: wrap
+        }
+
+        .foot .brand .mark {
+            color: var(--paper)
+        }
+
+        .foot .brand .wm {
+            font-size: 29px
+        }
+
+        .foot-tag {
+            font-family: var(--serif);
+            font-style: italic;
+            color: rgba(238, 243, 248, .6);
+            margin-top: 12px;
+            font-size: 1.05rem
+        }
+
+        .foot-nav {
+            display: flex;
+            gap: 26px;
+            flex-wrap: wrap
+        }
+
+        .foot-nav a {
+            font-size: 13px;
+            color: rgba(238, 243, 248, .6);
+            transition: color var(--d-base)
+        }
+
+        .foot-nav a:hover {
+            color: var(--paper)
+        }
+
+        .foot-base {
+            margin-top: 52px;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: rgba(238, 243, 248, .4)
+        }
+
+        .foot-base a {
+            color: rgba(238, 243, 248, .6)
+        }
+
+        .foot-base a:hover {
+            color: var(--gold2)
+        }
+
+        #chatBtn {
+            position: fixed;
+            right: 22px;
+            bottom: 22px;
+            z-index: 1200;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: var(--ink);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 16px 40px -12px rgba(24, 39, 65, .55);
+            transition: transform var(--d-base)
+        }
+
+        #chatBtn:hover {
+            transform: translateY(-3px)
+        }
+
+        #chatBtn svg {
+            width: 26px;
+            height: 26px;
+            color: var(--gold2)
+        }
+
+        #chatPanel {
+            position: fixed;
+            right: 22px;
+            bottom: 94px;
+            z-index: 1200;
+            width: min(362px, calc(100vw - 44px));
+            background: var(--card);
+            border: 1px solid var(--line2);
+            border-radius: 18px;
+            box-shadow: 0 34px 90px -30px rgba(24, 39, 65, .55);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(14px) scale(.98);
+            pointer-events: none;
+            transition: var(--d-base)
+        }
+
+        #chatPanel.open {
+            opacity: 1;
+            transform: none;
+            pointer-events: auto
+        }
+
+        .chat-head {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            gap: 10px;
+            align-items: center
+        }
+
+        .chat-head .mark {
+            width: 26px;
+            height: 26px;
+            color: var(--ink)
+        }
+
+        .chat-head b {
+            font-family: var(--serif);
+            font-weight: 400;
+            font-size: 1.05rem
+        }
+
+        .chat-head .dot {
+            margin-left: auto;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #6fae84;
+            box-shadow: 0 0 8px rgba(111, 174, 132, .7)
+        }
+
+        .chat-msgs {
+            height: 300px;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .msg {
+            max-width: 84%;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 13.5px;
+            line-height: 1.55;
+            animation: fadeUp .4s ease
+        }
+
+        .msg.bot {
+            background: var(--paper2);
+            border: 1px solid var(--line);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px
+        }
+
+        .msg.user {
+            background: var(--ink);
+            color: var(--paper);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px
+        }
+
+        .msg.typing {
+            display: flex;
+            gap: 5px;
+            align-items: center
+        }
+
+        .msg.typing i {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--ink3);
+            animation: tb 1s infinite
+        }
+
+        .msg.typing i:nth-child(2) {
+            animation-delay: .18s
+        }
+
+        .msg.typing i:nth-child(3) {
+            animation-delay: .36s
+        }
+
+        @keyframes tb {
+
+            0%,
+            100% {
+                transform: translateY(0);
+                opacity: .5
+            }
+
+            50% {
+                transform: translateY(-4px);
+                opacity: 1
+            }
+        }
+
+        .chat-chips {
+            display: flex;
+            gap: 8px;
+            padding: 0 14px 12px;
+            flex-wrap: wrap
+        }
+
+        .chat-chips button {
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: .12em;
+            border: 1px solid var(--line2);
+            background: none;
+            border-radius: 999px;
+            padding: 7px 12px;
+            color: var(--ink2);
+            cursor: pointer;
+            transition: all var(--d-base)
+        }
+
+        .chat-chips button:hover {
+            border-color: var(--gold);
+            color: var(--gold)
+        }
+
+        .chat-input {
+            display: flex;
+            border-top: 1px solid var(--line)
+        }
+
+        .chat-input input {
+            flex: 1;
+            border: none;
+            background: none;
+            padding: 14px 16px;
+            font-family: var(--sans);
+            font-size: 13.5px;
+            outline: none;
+            color: var(--ink)
+        }
+
+        .chat-input button {
+            border: none;
+            background: none;
+            padding: 0 18px;
+            color: var(--gold);
+            font-size: 17px;
+            cursor: pointer
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto
+            }
+
+            [data-reveal] {
+                transition: none;
+                opacity: 1;
+                transform: none
+            }
+
+            .marquee-track,
+            .typing::after,
+            .console-bar .live::before,
+            .cine-prog {
+                animation: none
+            }
+        }
+    </style>
+    <noscript>
+        <style>
+            [data-reveal] {
+                opacity: 1;
+                transform: none
+            }
+
+            .page {
+                display: block
+            }
+
+            .hero-copy {
+                opacity: 1;
+                transform: none
+            }
+
+            .cinema,
+            .cine-prog {
+                display: none
+            }
+        </style>
+    </noscript>
+</head>
+
+<body>
+
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+            <symbol id="aadiMark" viewBox="0 0 48 48">
+                <path d="M8 44 Q24 38.5 40 44" stroke="#e08b2d" stroke-width="1.6" fill="none" stroke-linecap="round" />
+                <path d="M24 12 L11 40" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" />
+                <path d="M24 12 L37 40" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" />
+                <path d="M16.5 31 L31.5 31" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+                <circle cx="24" cy="5.5" r="2.6" fill="#e08b2d" />
+                <path d="M24 0.6 L24 1.9 M28.4 2.3 L27.3 3.3 M19.6 2.3 L20.7 3.3" stroke="#e08b2d" stroke-width="1.1"
+                    stroke-linecap="round" />
+            </symbol>
+        </defs>
+    </svg>
+
+    <header class="nav" id="nav">
+        <a class="brand" href="#/home" data-nav="home" aria-label="Aadi home">
+            <svg class="mark">
+                <use href="#aadiMark" />
+            </svg><span class="wm">Aadi</span>
+        </a>
+        <nav class="nav-links">
+            <a href="#/home" data-nav="home">Home</a>
+            <div class="mm mm-journey">
+                <button class="mm-trigger" aria-haspopup="true">The Journey <span class="caret">▼</span></button>
+                <div class="mm-panel">
+                    <p class="p-title">Four million years · seven leaps · walk straight to one</p>
+                    <div class="jstrip-nav">
+                        <a class="jchip" href="#/journey?n=node-fire"><svg viewBox="0 0 24 24" fill="none">
+                                <path d="M12 3 C9 8 7.5 10.5 12 15 C16.5 10.5 15 8 12 3 Z" stroke="currentColor"
+                                    stroke-width="1.5" />
+                                <path d="M6 19 h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                            </svg><b>Fire</b><span>≈1M BC</span></a>
+                        <span class="jarrow">→</span>
+                        <a class="jchip" href="#/journey?n=node-word"><svg viewBox="0 0 24 24" fill="none">
+                                <rect x="5" y="4" width="14" height="16" rx="2" stroke="currentColor"
+                                    stroke-width="1.5" />
+                                <path d="M9 9 h6 M9 12.5 h6 M9 16 h4" stroke="currentColor" stroke-width="1.4"
+                                    stroke-linecap="round" />
+                            </svg><b>Writing</b><span>≈3400 BC</span></a>
+                        <span class="jarrow">→</span>
+                        <a class="jchip" href="#/journey?n=node-farm"><svg viewBox="0 0 24 24" fill="none">
+                                <path d="M12 20 V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                <path
+                                    d="M12 12 C9 12 7.5 10 7.5 7.5 C10.5 7.5 12 9.5 12 12 Z M12 12 C15 12 16.5 10 16.5 7.5 C13.5 7.5 12 9.5 12 12 Z"
+                                    stroke="currentColor" stroke-width="1.3" />
+                            </svg><b>Cities</b><span>≈10K BC</span></a>
+                        <span class="jarrow">→</span>
+                        <a class="jchip" href="#/journey?n=node-machine"><svg viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="1.5" />
+                                <circle cx="12" cy="12" r="2" fill="currentColor" />
+                                <path
+                                    d="M12 5 V3 M12 21 v-2 M5 12 H3 M21 12 h-2 M7 7 L5.6 5.6 M17 7 l1.4 -1.4 M7 17 l-1.4 1.4 M17 17 l1.4 1.4"
+                                    stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+                            </svg><b>Machine</b><span>1769</span></a>
+                        <span class="jarrow">→</span>
+                        <a class="jchip" href="#/journey?n=node-digital"><svg viewBox="0 0 24 24" fill="none">
+                                <circle cx="6" cy="17" r="2.4" stroke="currentColor" stroke-width="1.4" />
+                                <circle cx="12" cy="6" r="2.4" stroke="currentColor" stroke-width="1.4" />
+                                <circle cx="18" cy="17" r="2.4" stroke="currentColor" stroke-width="1.4" />
+                                <path d="M7.5 15 L10.8 8 M13.2 8 L16.5 15 M8.4 17 h7.2" stroke="currentColor"
+                                    stroke-width="1.3" />
+                            </svg><b>Digital</b><span>1969–76</span></a>
+                        <span class="jarrow">→</span>
+                        <a class="jchip" href="#/journey?n=node-ai"><svg viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5" />
+                                <ellipse cx="12" cy="12" rx="9" ry="3.6" stroke="currentColor" stroke-width="1.1" />
+                            </svg><b>Intelligence</b><span>Now</span></a>
+                        <span class="jarrow">→</span>
+                        <a class="jchip" href="#/journey?n=node-aadi"><svg>
+                                <use href="#aadiMark" />
+                            </svg><b>Aadi</b><span>Next</span></a>
+                    </div>
+                </div>
+            </div>
+            <div class="mm mm-services">
+                <button class="mm-trigger" aria-haspopup="true">Services <span class="caret">▼</span></button>
+                <div class="mm-panel">
+                    <p class="p-title">What we build</p>
+                    <a class="mm-card" href="#/services"><svg viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5" />
+                            <ellipse cx="12" cy="12" rx="9" ry="3.6" stroke="currentColor" stroke-width="1.1" />
+                        </svg><b>Custom AI agents</b><span>Agents that research, draft, decide and act inside your
+                            workflow.</span></a>
+                    <a class="mm-card" href="#/services"><svg viewBox="0 0 24 24" fill="none">
+                            <path d="M4 7 h10 M18 7 h2 M4 12 h4 M12 12 h8 M4 17 h12" stroke="currentColor"
+                                stroke-width="1.6" stroke-linecap="round" />
+                            <circle cx="16" cy="7" r="2" stroke="currentColor" stroke-width="1.4" />
+                            <circle cx="10" cy="12" r="2" stroke="currentColor" stroke-width="1.4" />
+                            <circle cx="18" cy="17" r="2" stroke="currentColor" stroke-width="1.4" />
+                        </svg><b>Workflow automation</b><span>The repetitive paths, removed end to end.</span></a>
+                    <a class="mm-card" href="#/services"><svg viewBox="0 0 24 24" fill="none">
+                            <rect x="4" y="5" width="16" height="11" rx="2" stroke="currentColor" stroke-width="1.5" />
+                            <path d="M9 20 h6 M12 16 v4" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" />
+                        </svg><b>Internal tools</b><span>Copilots, dashboards and control rooms teams actually
+                            use.</span></a>
+                    <a class="mm-card" href="#/services"><svg viewBox="0 0 24 24" fill="none">
+                            <path d="M9 12 a3 3 0 0 1 3 -3 h1 M15 12 a3 3 0 0 1 -3 3 h-1" stroke="currentColor"
+                                stroke-width="1.6" stroke-linecap="round" />
+                            <path d="M13 9 l2 -2 M11 15 l-2 2" stroke="currentColor" stroke-width="1.6"
+                                stroke-linecap="round" />
+                            <rect x="3" y="9" width="4" height="6" rx="1.4" stroke="currentColor" stroke-width="1.4" />
+                            <rect x="17" y="9" width="4" height="6" rx="1.4" stroke="currentColor" stroke-width="1.4" />
+                        </svg><b>Integration</b><span>Plugged into your CRM, ERP, inbox — no rip-and-replace.</span></a>
+                </div>
+            </div>
+            <div class="mm mm-work">
+                <button class="mm-trigger" aria-haspopup="true">Work <span class="caret">▼</span></button>
+                <div class="mm-panel">
+                    <p class="p-title">Selected builds</p>
+                    <a class="mm-card" href="#/work"><b>The Application Engine</b><span>Multi-agent fleet that applies
+                            while you sleep.</span><strong>4 hrs → 90 s</strong></a>
+                    <a class="mm-card" href="#/work"><b>The Signal Engine</b><span>Rule-based market signals with a full
+                            audit trail.</span><strong>24 / 7</strong></a>
+                </div>
+            </div>
+            <a href="#/about" data-nav="about">About</a>
+            <a class="btn-line" href="#/contact" data-nav="contact">Start a project</a>
+        </nav>
+        <button class="burger" id="burger" aria-label="Menu"><i></i><i></i></button>
+    </header>
+
+    <div class="mnav" id="mnav">
+        <a class="top" href="#/home" data-nav="home">Home <small>01</small></a>
+        <div class="acc">
+            <button class="acc-btn">The Journey <span class="fx">+</span></button>
+            <div class="acc-body">
+                <a href="#/journey">Walk the full journey →</a>
+                <a href="#/journey?n=node-fire">I · The Fire</a><a href="#/journey?n=node-word">II · The Word</a><a
+                    href="#/journey?n=node-farm">III · The Cities</a><a href="#/journey?n=node-machine">IV · The
+                    Machine</a><a href="#/journey?n=node-digital">V · The Digital</a><a href="#/journey?n=node-ai">VI ·
+                    The Intelligence</a><a href="#/journey?n=node-aadi">VII · Aadi</a>
+            </div>
+        </div>
+        <div class="acc">
+            <button class="acc-btn">Services <span class="fx">+</span></button>
+            <div class="acc-body">
+                <a href="#/services">Custom AI agents</a><a href="#/services">Workflow automation</a><a
+                    href="#/services">Internal tools</a><a href="#/services">Integration</a>
+            </div>
+        </div>
+        <div class="acc">
+            <button class="acc-btn">Work <span class="fx">+</span></button>
+            <div class="acc-body">
+                <a href="#/work">The Application Engine</a><a href="#/work">The Signal Engine</a>
+            </div>
+        </div>
+        <a class="top" href="#/about" data-nav="about">About <small>05</small></a>
+        <a class="top" href="#/contact" data-nav="contact">Start a project <small>06</small></a>
+    </div>
+
+    <!-- ==================== HOME ==================== -->
+    <section class="page" id="page-home">
+        <div class="hero" id="hero">
+            <div class="cinema" aria-hidden="true">
+                <!-- 1 · SPARK -->
+                <div class="scene s1">
+                    <svg class="s-svg" viewBox="0 0 200 200" fill="none">
+                        <circle cx="100" cy="100" r="26" fill="rgba(224,139,45,.10)" />
+                        <circle cx="100" cy="100" r="14" fill="rgba(242,180,92,.16)" />
+                        <circle class="spark-core" cx="100" cy="100" r="4.5" fill="#ffd9a0" />
+                        <g class="rays" stroke="#e08b2d" stroke-width="1.2" stroke-linecap="round">
+                            <path d="M100 74 L100 87" />
+                            <path d="M100 113 L100 126" />
+                            <path d="M74 100 L87 100" />
+                            <path d="M113 100 L126 100" />
+                            <path d="M82 82 L91 91" />
+                            <path d="M109 109 L118 118" />
+                            <path d="M118 82 L109 91" />
+                            <path d="M91 109 L82 118" />
+                        </g>
+                        <circle class="ember" cx="94" cy="92" r="1.6" fill="#f2b45c" />
+                        <circle class="ember e2" cx="106" cy="90" r="1.3" fill="#f2b45c" />
+                        <circle class="ember e3" cx="100" cy="88" r="1.1" fill="#ffd9a0" />
+                    </svg>
+                    <p class="s-cap">a spark, in the dark</p>
+                </div>
+                <!-- 2 · FIRE -->
+                <div class="scene s2">
+                    <svg class="s-svg" viewBox="0 0 200 200" fill="none">
+                        <circle cx="100" cy="98" r="56" fill="rgba(224,139,45,.12)" />
+                        <path class="flame-o" d="M100 52 C84 78 88 96 100 108 C112 96 116 78 100 52 Z" stroke="#c26a1f"
+                            stroke-width="2.2" />
+                        <path class="flame-i" d="M100 74 C93 86 95 96 100 101 C105 96 107 86 100 74 Z" fill="#e08b2d" />
+                        <path d="M76 112 L124 118 M124 112 L76 118" stroke="#4a5b78" stroke-width="3"
+                            stroke-linecap="round" />
+                        <g fill="#31405e">
+                            <path class="fig f1" d="M46 132 c0 -11 5.5 -17 11 -17 c5.5 0 11 6 11 17 z" />
+                            <circle class="fig f1" cx="57" cy="108" r="5.5" />
+                            <path class="fig f2" d="M132 132 c0 -11 5.5 -17 11 -17 c5.5 0 11 6 11 17 z" />
+                            <circle class="fig f2" cx="143" cy="108" r="5.5" />
+                            <path class="fig f3" d="M89 140 c0 -10 5 -15 11 -15 c6 0 11 5 11 15 z" />
+                            <circle class="fig f3" cx="100" cy="118" r="5" />
+                        </g>
+                        <circle class="ember" cx="96" cy="66" r="1.5" fill="#e08b2d" />
+                        <circle class="ember e2" cx="105" cy="62" r="1.2" fill="#e08b2d" />
+                    </svg>
+                    <p class="s-cap">the first fire · ≈ 1,000,000 bc</p>
+                </div>
+                <!-- 3 · HAND & MARK -->
+                <div class="scene s3">
+                    <svg class="s-svg" viewBox="0 0 200 200" fill="none">
+                        <path d="M28 40 q 40 -14 80 0 M20 160 q 60 16 120 0" stroke="rgba(74,91,120,.18)"
+                            stroke-width="2" stroke-linecap="round" />
+                        <path class="wallstroke ws1" d="M36 74 q 24 -20 48 0 q 16 13 34 4" stroke="#c26a1f"
+                            stroke-width="2.6" stroke-linecap="round" />
+                        <path class="wallstroke ws2" d="M42 94 q 34 -12 70 -2" stroke="#c26a1f" stroke-width="1.7"
+                            stroke-linecap="round" />
+                        <circle class="wallstroke ws3" cx="132" cy="60" r="9" stroke="#c26a1f" stroke-width="1.7" />
+                        <path class="hand" fill="#31405e" opacity=".9"
+                            d="M98 168 C91 150 89 128 92 111 C93 103 100 103 101 110 L103 128 L106 104 C107 96 114 96 115 104 L116 128 L120 107 C121 99 128 100 128 107 L127 130 L132 116 C133 109 139 110 139 117 L137 143 C135 159 126 168 114 168 C106 168 101 172 98 168 Z" />
+                    </svg>
+                    <p class="s-cap">the first mark · ≈ 3,400 bc</p>
+                </div>
+                <!-- 4 · MACHINE (JS-driven slider-crank) -->
+                <div class="scene s4">
+                    <svg class="s-svg" viewBox="0 0 200 200" fill="none">
+                        <path d="M70 134 v14 M52 150 h36" stroke="#4a5b78" stroke-width="2.4" stroke-linecap="round" />
+                        <g id="wheelG" stroke="#4a5b78" stroke-width="2.4">
+                            <circle cx="70" cy="100" r="34" />
+                            <path d="M70 66 V134 M36 100 H104 M46 76 L94 124 M94 76 L46 124" />
+                        </g>
+                        <circle cx="70" cy="100" r="5" fill="#4a5b78" />
+                        <rect x="98" y="82" width="56" height="36" rx="7" stroke="#4a5b78" stroke-width="2.4" />
+                        <line id="rodLine" x1="90" y1="100" x2="120" y2="100" stroke="#c26a1f" stroke-width="3"
+                            stroke-linecap="round" />
+                        <g id="pistonG">
+                            <circle cx="120" cy="100" r="7.5" fill="#c26a1f" />
+                            <path d="M120 100 h14" stroke="#c26a1f" stroke-width="3" stroke-linecap="round" />
+                        </g>
+                        <circle id="pinC" cx="90" cy="100" r="4" fill="#e08b2d" />
+                    </svg>
+                    <p class="s-cap">the first machine · 1769</p>
+                </div>
+                <!-- 5 · ROCKET -->
+                <div class="scene s5">
+                    <svg class="s-svg" viewBox="0 0 200 200" fill="none">
+                        <g stroke="#8fa3c8" stroke-width="1.4" stroke-linecap="round">
+                            <path class="twinkle"
+                                d="M38 42 h.2 M162 58 h.2 M48 148 h.2 M152 152 h.2 M28 92 h.2 M176 110 h.2" />
+                        </g>
+                        <path d="M158 30 a11 11 0 1 0 8 18 a9 9 0 0 1 -8 -18 Z" stroke="#8fa3c8" stroke-width="1.3" />
+                        <path d="M62 150 v-52 M62 104 h10 M62 122 h8 M62 138 h10" stroke="#5c7093" stroke-width="2"
+                            stroke-linecap="round" />
+                        <g class="rocketg">
+                            <path d="M100 38 C90 54 88 74 90 94 h20 C112 74 110 54 100 38 Z" stroke="#f0c083"
+                                stroke-width="2.2" />
+                            <circle cx="100" cy="66" r="5.5" stroke="#f0c083" stroke-width="1.8" />
+                            <path d="M90 84 L78 102 L90 99 M110 84 L122 102 L110 99" stroke="#f0c083" stroke-width="2.2"
+                                stroke-linecap="round" />
+                            <path class="exhaust" d="M95 96 q5 14 5 24 M105 96 q-3 16 -3 28 M100 96 q0 18 0 32"
+                                stroke="#e08b2d" stroke-width="2.4" stroke-linecap="round" />
+                        </g>
+                        <circle class="puff" cx="88" cy="150" r="6" stroke="#5c7093" stroke-width="1.6" />
+                        <circle class="puff p2" cx="102" cy="152" r="7" stroke="#5c7093" stroke-width="1.6" />
+                        <circle class="puff p3" cx="114" cy="150" r="5" stroke="#5c7093" stroke-width="1.6" />
+                    </svg>
+                    <p class="s-cap">the first leap off-world · 1969</p>
+                </div>
+                <!-- 6 · ORB -->
+                <div class="scene s6">
+                    <div class="orb-wrap">
+                        <svg class="plate-svg" viewBox="0 0 200 250" fill="none" aria-hidden="true">
+                            <defs>
+                                <radialGradient id="orbFill" cx="38%" cy="30%" r="78%">
+                                    <stop offset="0%" stop-color="#f6c480" />
+                                    <stop offset="34%" stop-color="#e08b2d" />
+                                    <stop offset="64%" stop-color="#5b6f9e" />
+                                    <stop offset="100%" stop-color="#0b1220" />
+                                </radialGradient>
+                            </defs>
+                            <circle cx="100" cy="125" r="72" fill="url(#orbFill)" stroke="#4a5b78" stroke-width="2.2" />
+                            <circle cx="100" cy="125" r="72" fill="none" stroke="rgba(224,139,45,.55)" stroke-width="1" />
+                            <path d="M40 96 q60 -30 120 6" stroke="rgba(255,255,255,.4)" stroke-width="1.4" stroke-linecap="round" />
+                            <path d="M34 120 q66 26 132 -4" stroke="rgba(255,255,255,.22)" stroke-width="1.2" stroke-linecap="round" />
+                            <path d="M44 150 q56 18 112 -2" stroke="rgba(255,255,255,.16)" stroke-width="1.1" stroke-linecap="round" />
+                            <ellipse cx="100" cy="125" rx="72" ry="26" stroke="rgba(255,255,255,.18)" stroke-width="1" fill="none" />
+                            <circle cx="74" cy="92" r="6.5" fill="#ffe6bf" opacity=".95" />
+                            <circle cx="74" cy="92" r="11" fill="none" stroke="rgba(255,230,191,.5)" stroke-width="1" />
+                        </svg>
+                        <svg class="orbit" viewBox="0 0 100 100" fill="none">
+                            <circle cx="50" cy="50" r="48" stroke="rgba(224,139,45,.5)" stroke-width=".8"
+                                stroke-dasharray="2 6" />
+                            <circle cx="50" cy="2" r="2.4" fill="#e08b2d" />
+                        </svg>
+                    </div>
+                    <p class="s-cap">the first thinking machine · now</p>
+                </div>
+                <!-- 7 · WORDMARK -->
+                <div class="scene s7">
+                    <div class="wm7"><span class="wm-dot"></span>Aadi
+                        <svg viewBox="0 0 100 20">
+                            <path d="M2 12 Q 50 2 98 12" />
+                        </svg>
+                    </div>
+                    <p class="s-cap">where the next age begins</p>
+                </div>
+                <div class="cine-prog"></div>
+            </div>
+
+            <div class="hero-copy">
+                <p class="eyebrow">Aadi · An AI agency · Est. at the beginning</p>
+                <h1>From the first spark<br>to the <em>first thought machine.</em></h1>
+                <p class="sub">We build custom AI agents and end-to-end automation systems around your actual operations
+                    — not slide decks, not generic chatbots. Working software, from the very first spark.</p>
+                <div class="ctas">
+                    <a class="btn-dark" href="#/contact">Start a project →</a>
+                    <a class="btn-line" href="#/journey">Walk the journey</a>
+                </div>
+                <div class="hero-stack" data-reveal style="--d:.28s">
+                    <b>Stack</b>
+                    <span>OpenAI</span><span>Anthropic</span><span>LangGraph</span><span>AWS</span><span>Vercel</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="marquee" aria-hidden="true">
+            <div class="marquee-track" id="marqueeTrack">
+                <span>AI Agents <b>✦</b></span><span>Workflow Automation <b>✦</b></span><span>Internal Tools
+                    <b>✦</b></span><span>Integrations <b>✦</b></span><span>LLM Pipelines <b>✦</b></span><span>Browser
+                    Automation <b>✦</b></span><span>Evals &amp; Guardrails <b>✦</b></span>
+            </div>
+        </div>
+
+        <div class="sec">
+            <div class="wrap agent-band">
+                <div>
+                    <p class="eyebrow" data-reveal>Live from the workshop</p>
+                    <h2 class="h2" data-reveal style="--d:.08s">Watch an agent <em>actually work.</em></h2>
+                    <p class="lede" data-reveal style="--d:.16s">This is the shape of every Aadi build: an agent reading
+                        real work, extracting structure, catching its own exceptions, and handing judgement back to a
+                        human. Ninety seconds, not nine minutes.</p>
+                </div>
+                <div class="console" data-reveal style="--d:.2s" aria-label="Live agent demonstration">
+                    <div class="console-bar"><i></i><i></i><i></i><span>aadi-agent — live</span><span
+                            class="live">RUNNING</span></div>
+                    <div class="console-body" id="consoleBody"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sec" style="padding-top:0">
+            <div class="wrap">
+                <p class="eyebrow" data-reveal>What we do</p>
+                <h2 class="h2" data-reveal style="--d:.08s">Four ways we plug AI <em>into your operation.</em></h2>
+                <div class="svc-cards">
+                    <article class="svc-card" data-reveal><span class="no">01</span>
+                        <h3>Custom AI agents</h3>
+                        <p>Agents that research, draft, decide and act inside your workflow — aware of your context,
+                            bound by your rules.</p><a href="#/services">Explore →</a>
+                    </article>
+                    <article class="svc-card" data-reveal style="--d:.08s"><span class="no">02</span>
+                        <h3>Workflow automation</h3>
+                        <p>We map your operations end to end and automate the paths that never needed a human in the
+                            first place.</p><a href="#/services">Explore →</a>
+                    </article>
+                    <article class="svc-card" data-reveal style="--d:.16s"><span class="no">03</span>
+                        <h3>Internal tools</h3>
+                        <p>Copilots, dashboards and control rooms your team will actually use — built for the newly
+                            automated operation.</p><a href="#/services">Explore →</a>
+                    </article>
+                    <article class="svc-card" data-reveal style="--d:.24s"><span class="no">04</span>
+                        <h3>Integration</h3>
+                        <p>Intelligence plugged into what you already run: CRMs, databases, inboxes, ERPs. No
+                            rip-and-replace.</p><a href="#/services">Explore →</a>
+                    </article>
+                </div>
+            </div>
+        </div>
+
+        <div class="sec jteaser">
+            <div class="wrap jteaser-grid">
+                <div>
+                    <p class="eyebrow" data-reveal>The Journey</p>
+                    <h2 class="h2" data-reveal style="--d:.08s">Four million years. <em>Seven leaps.</em></h2>
+                    <p class="lede" data-reveal style="--d:.16s">Every age of intelligence began with a single step —
+                        fire, writing, cities, the engine, the network, the thinking machine. We mapped it as a
+                        mind-map. Walk it, and see where the road leads: to us.</p>
+                    <div style="margin-top:34px" data-reveal><a class="btn-dark" href="#/journey">Walk the journey ↓</a>
+                    </div>
+                </div>
+                <div class="jstrip" data-reveal style="--d:.16s">
+                    <img class="mini"
+                        src="https://image.qwenlm.ai/public_source/e1a49741-7d1c-4ca7-a2b9-da3f4d5eb399/16f41c7a5-d8bb-4e02-9565-2c99eb23423f.png"
+                        alt="The first fire" loading="lazy">
+                    <img class="mini"
+                        src="https://image.qwenlm.ai/public_source/e1a49741-7d1c-4ca7-a2b9-da3f4d5eb399/15319b7e3-7562-42af-9d91-e06c8db4dc38.png"
+                        alt="The first writing" loading="lazy">
+                    <img class="mini"
+                        src="https://image.qwenlm.ai/public_source/e1a49741-7d1c-4ca7-a2b9-da3f4d5eb399/13f6a4f90-87e1-4cd5-8296-4346ccf19258.png"
+                        alt="The machine age" loading="lazy">
+                    <img class="mini"
+                        src="https://image.qwenlm.ai/public_source/e1a49741-7d1c-4ca7-a2b9-da3f4d5eb399/1633530d6-f471-42ae-b505-f0383e7e66e5.png"
+                        alt="The age of intelligence" loading="lazy">
+                </div>
+            </div>
+        </div>
+
+        <div class="sec">
+            <div class="wrap">
+                <p class="eyebrow" data-reveal>Selected builds</p>
+                <h2 class="h2" data-reveal style="--d:.08s">The work came <em>before the name.</em></h2>
+                <div class="builds">
+                    <article class="build" data-reveal>
+                        <span class="build-no">BUILD 01</span>
+                        <h3>The Application Engine</h3>
+                        <p>A coordinated fleet of agents that discovers opportunities, tailors every application,
+                            completes the forms and tracks each outcome.</p>
+                        <ul class="chips">
+                            <li>Agent orchestration</li>
+                            <li>Browser automation</li>
+                            <li>Evaluation loops</li>
+                        </ul>
+                        <div class="build-stat"><strong>4 hrs → 90 sec</strong><span>manual work per run</span></div>
+                        <a class="build-link" href="#/work">Read the build →</a>
+                    </article>
+                    <article class="build" data-reveal style="--d:.1s">
+                        <span class="build-no">BUILD 02</span>
+                        <h3>The Signal Engine</h3>
+                        <p>A custom indicator that reads live market data, applies disciplined rules and emits
+                            structured signals with a full audit trail.</p>
+                        <ul class="chips">
+                            <li>Real-time pipelines</li>
+                            <li>Rule engine</li>
+                            <li>Alerting</li>
+                        </ul>
+                        <div class="build-stat"><strong>24 / 7</strong><span>continuous observation</span></div>
+                        <a class="build-link" href="#/work">Read the build →</a>
+                    </article>
+                </div>
+                <div class="team-teaser" data-reveal>
+                    <div class="medals"><span class="medal">K</span><span class="medal">G</span><span
+                            class="medal">V</span></div>
+                    <p class="lede" style="margin:0">A young, builder-led team from Kadapa, India. <a href="#/about"
+                            style="color:var(--gold);border-bottom:1px solid rgba(194,106,31,.4)">Meet the founders
+                            →</a></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta-band">
+            <h2 class="h2" data-reveal>Every solution has <em>a beginning.</em></h2>
+            <p class="lede" data-reveal style="--d:.1s">Tell us the problem. We'll tell you honestly whether AI should
+                touch it — and exactly what we'd build.</p>
+            <div class="ctas" data-reveal style="--d:.2s"><a class="btn-dark" href="#/contact">Start a project →</a><a
+                    class="btn-line" href="#/services">See services</a></div>
+        </div>
+    </section>
+
+    <!-- ==================== JOURNEY ==================== -->
+    <section class="page" id="page-journey">
+        <div class="pagehead wrap">
+            <p class="eyebrow" style="justify-content:center" data-reveal>The Journey · a mind-map of intelligence</p>
+            <h1 class="h1" data-reveal style="--d:.08s">Every leap, <em>left and right,</em><br>down one spine.</h1>
+            <p class="lede" data-reveal style="--d:.16s">Seven leaps took us from the first spark to the first thinking
+                machine. Follow the spine — hover or tap any node to open its fuller story.</p>
+        </div>
+        <div class="mindmap">
+            <div class="spine" aria-hidden="true"></div>
+            <article class="mnode left" id="node-fire" data-reveal><span class="mdot"></span>
+                <svg class="branch" viewBox="0 0 64 44" preserveAspectRatio="none" fill="none">
+                    <path d="M2 12 Q 40 6 62 26" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 6"
+                        stroke-linecap="round" />
+                </svg>
+                <div class="mcard">
+                    <div class="plate"><img
+                            src="https://image.qwenlm.ai/public_source/e1a49741-7d1c-4ca7-a2b9-da3f4d5eb399/16f41c7a5-d8bb-4e02-9565-2c99eb23423f.png"
+                            alt="Early humans around a campfire" loading="lazy"></div>
+                    <span class="yr">≈ 1,000,000 BC · left</span>
+                    <h3>The Fire — the first spark</h3>
+                    <p class="short">Flame tamed and carried. Warmth, cooked food, the first circle of stories.</p>
+                    <div class="more">
+                        <p>Wonderwerk Cave holds some of the earliest traces of controlled fire. Fire extended the day,
+                            shrank the gut, grew the brain — technology before technology had a name.</p>
+                    </div>
+                    <span class="mhint">hover / tap for more ✦</span>
+                </div>
+            </article>
+            <article class="mnode right" id="node-word" data-reveal><span class="mdot"></span>
+                <svg class="branch" viewBox="0 0 64 44" preserveAspectRatio="none" fill="none">
+                    <path d="M2 12 Q 40 6 62 26" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 6"
+                        stroke-linecap="round" />
+                </svg>
+                <div class="mcard">
+                    <div class="plate"><img
+                            src="https://image.qwenlm.ai/public_source/e1a49741-7d1c-4ca7-a2b9-da3f4d5eb399/15319b7e3-7562-42af-9d91-e06c8db4dc38.png"
+                            alt="A scribe pressing cuneiform into clay" loading="lazy"></div>
+                    <span class="yr">≈ 3,400 BC · right</span>
+                    <h3>Language &amp; writing — the first shared memory</h3>
+                    <p class="short">Marks on clay outlive their makers. Thought becomes an object.</p>
+                    <div class="more">
+                        <p>Cuneiform in Sumer turned knowledge into something cumulative. No generation ever starts from
+                            zero again — every system since is a footnote to this one.</p>
+                    </div>
+                    <span class="mhint">hover / tap for more ✦</span>
+                </div>
+            </article>
+            <article class="mnode left" id="node-farm" data-reveal><span class="mdot"></span>
+                <svg class="branch" viewBox="0 0 64 44" preserveAspectRatio="none" fill="none">
+                    <path d="M2 12 Q 40 6 62 26" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 6"
+                        stroke-linecap="round" />
+                </svg>
+                <div class="mcard">
+                    <div class="plate"><img
+                            src="https://image.qwenlm.ai/public_source/e1a49741-7d1c-4ca7-a2b9-da3f4d5eb399/1d9c93e83-9bce-4hba-bc98-900bbb169cbf.png"
+                            onerror="this.src='https://image.qwenlm.ai/public_source/e1a49741-7d1c-4ca7-a2b9-da3f4d5eb399/184cdd780-6672-402a-9c54-dbe0543fd34a.png'"
+                            alt="The first villages and fields" loading="lazy"></div>
+                    <span class="yr">≈ 10,000 BC · left</span>
+                    <h3>Agriculture &amp; cities — the first systems</h3>
+                    <p class="short">Fields, granaries, roads, laws. Surplus becomes coordination.</p>
+                    <div class="more">
+                        <p>Farming fixed us in place; surplus became trade, trade became cities, cities became the first
+                            operations problem — scheduling, storage, accounts. The first workflows to automate.</p>
+                    </div>
+                    <span class="mhint">hover / tap for more ✦</span>
+                </div>
+            </article>
+            <article class="mnode right" id="node-machine" data-reveal><span class="mdot"></span>
+                <svg class="branch" viewBox="0 0 64 44" preserveAspectRatio="none" fill="none">
+                    <path d="M2 12 Q 40 6 62 26" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 6"
+                        stroke-linecap="round" />
+                </svg>
+                <div class="mcard">
+                    <div class="plate"><img
+                            src="https://image.qwenlm.ai/public_source/e1a49741-7d1c-4ca7-a2b9-da3f4d5eb399/13f6a4f90-87e1-4cd5-8296-4346ccf19258.png"
+                            alt="A Victorian steam locomotive" loading="lazy"></div>
+                    <span class="yr">1769 · right</span>
+                    <h3>The machine age — the first automation</h3>
+                    <p class="short">Heat into motion. Muscle into machine. Repetition leaves the body.</p>
+                    <div class="more">
+                        <p>Watt's steam engine patent of 1769. Distance began to shrink, work began to repeat without
+                            fatigue — the start of every automation roadmap since, including ours.</p>
+                    </div>
+                    <span class="mhint">hover / tap for more ✦</span>
+                </div>
+            </article>
+            <article class="mnode left" id="node-digital" data-reveal><span class="mdot"></span>
+                <svg class="branch" viewBox="0 0 64 44" preserveAspectRatio="none" fill="none">
+                    <path d="M2 12 Q 40 6 62 26" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 6"
+                        stroke-linecap="round" />
+                </svg>
+                <div class="mcard">
+                    <div class="plate"><img
+                            src="https://image.qwenlm.ai/public_source/e1a49741-7d1c-4ca7-a2b9-da3f4d5eb399/1f161c684-c84b-44c1-90ac-5d3165bd2550.png"
+                            alt="A vintage mainframe computer room" loading="lazy"></div>
+                    <span class="yr">1969 – 76 · left</span>
+                    <h3>The digital age — the first network</h3>
+                    <p class="short">Information becomes weightless and moves at light speed.</p>
+                    <div class="more">
+                        <p>ARPANET's first packets in 1969; the Cray-1 supercomputer in 1976, ten times faster than
+                            anything alive. Data — thought's raw material — became everywhere at once.</p>
+                    </div>
+                    <span class="mhint">hover / tap for more ✦</span>
+                </div>
+            </article>
+            <article class="mnode right" id="node-ai" data-reveal><span class="mdot"></span>
+                <svg class="branch" viewBox="0 0 64 44" preserveAspectRatio="none" fill="none">
+                    <path d="M2 12 Q 40 6 62 26" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 6"
+                        stroke-linecap="round" />
+                </svg>
+                <div class="mcard">
+                    <div class="plate"><img
+                            src="https://image.qwenlm.ai/public_source/e1a49741-7d1c-4ca7-a2b9-da3f4d5eb399/1633530d6-f471-42ae-b505-f0383e7e66e5.png"
+                            alt="A luminous sphere above an open hand" loading="lazy"></div>
+                    <span class="yr">Now · right</span>
+                    <h3>The age of intelligence — the first thinking machine</h3>
+                    <p class="short">The tool begins to work beside the hand that made it.</p>
+                    <div class="more">
+                        <p>Frontier models read, write, see and plan. For the first time the tool participates in the
+                            thinking — and every business, of any size, gets a brand-new lever.</p>
+                    </div>
+                    <span class="mhint">hover / tap for more ✦</span>
+                </div>
+            </article>
+            <article class="mnode terminal" id="node-aadi" data-reveal><span class="mdot"></span>
+                <div class="tcard">
+                    <svg class="mark-big">
+                        <use href="#aadiMark" />
+                    </svg>
+                    <h3>Aadi — the next beginning</h3>
+                    <p>Every leap on this spine led here. We build the systems of this new age — custom AI agents and
+                        automation, installed directly into the way you work.</p>
+                    <div class="ctas"><a class="btn-dark" href="#/contact">Start a project →</a><a class="btn-line"
+                            href="#/services">See services</a></div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- ==================== SERVICES ==================== -->
+    <section class="page" id="page-services">
+        <div class="pagehead wrap">
+            <p class="eyebrow" style="justify-content:center" data-reveal>Services</p>
+            <h1 class="h1" data-reveal style="--d:.08s">Custom AI, built around <em>your operation.</em></h1>
+            <p class="lede" data-reveal style="--d:.16s">Four disciplines, one goal: intelligence installed directly
+                into how you work. Fixed scope, working software, founder-led delivery.</p>
+        </div>
+        <div class="wrap">
+            <div class="svc" data-reveal><span class="svc-no">01</span>
+                <div>
+                    <h3>Custom AI agents</h3>
+                    <p class="desc">Purpose-built agents that research, draft, decide and act inside your workflows.
+                        Trained on your context, bound by your rules, evaluated before they ever touch production.</p>
+                </div>
+                <ul>
+                    <li>Discovery &amp; workflow mapping</li>
+                    <li>Agent architecture &amp; tool design</li>
+                    <li>Guardrails, evals &amp; human-in-the-loop</li>
+                    <li>Deployment inside your existing stack</li>
+                </ul>
+            </div>
+            <div class="svc" data-reveal><span class="svc-no">02</span>
+                <div>
+                    <h3>Workflow automation</h3>
+                    <p class="desc">We map your operations end to end and remove the repetitive paths — intake,
+                        extraction, routing, reporting — so your people only touch what needs judgement.</p>
+                </div>
+                <ul>
+                    <li>End-to-end process audit</li>
+                    <li>Automation of repetitive paths</li>
+                    <li>Exception handling &amp; escalation</li>
+                    <li>Measured before/after time savings</li>
+                </ul>
+            </div>
+            <div class="svc" data-reveal><span class="svc-no">03</span>
+                <div>
+                    <h3>Internal tools</h3>
+                    <p class="desc">Copilots, dashboards and control rooms your team will actually use — purpose-built
+                        software for the newly automated operation.</p>
+                </div>
+                <ul>
+                    <li>Operator dashboards &amp; copilots</li>
+                    <li>Approval &amp; review interfaces</li>
+                    <li>Audit trails &amp; observability</li>
+                    <li>Training &amp; handover included</li>
+                </ul>
+            </div>
+            <div class="svc" data-reveal><span class="svc-no">04</span>
+                <div>
+                    <h3>Integration</h3>
+                    <p class="desc">Intelligence plugged into what you already run. No rip-and-replace, no disruption —
+                        your systems, quietly upgraded.</p>
+                </div>
+                <ul>
+                    <li>CRM, ERP &amp; database connectors</li>
+                    <li>Email, docs &amp; comms pipelines</li>
+                    <li>APIs &amp; webhooks, built cleanly</li>
+                    <li>Zero-downtime rollout</li>
+                </ul>
+            </div>
+            <div style="margin-top:90px">
+                <p class="eyebrow" style="justify-content:center" data-reveal>How we work</p>
+                <h2 class="h2" style="text-align:center" data-reveal style="--d:.08s">Four steps. <em>No ceremony.</em>
+                </h2>
+                <div class="process">
+                    <div class="step" data-reveal><span class="s-no">STEP 01</span>
+                        <h4>Discover</h4>
+                        <p>We sit inside your operation, find the workflow that matters most, and measure it honestly.
+                        </p><span class="wk">Week 1</span>
+                    </div>
+                    <div class="step" data-reveal style="--d:.08s"><span class="s-no">STEP 02</span>
+                        <h4>Design</h4>
+                        <p>Agent architecture, guardrails and success metrics — on paper, before a line of code.</p>
+                        <span class="wk">Week 2</span>
+                    </div>
+                    <div class="step" data-reveal style="--d:.16s"><span class="s-no">STEP 03</span>
+                        <h4>Build</h4>
+                        <p>Working software in weekly increments. You watch it run on real work, early.</p><span
+                            class="wk">Weeks 3–6</span>
+                    </div>
+                    <div class="step" data-reveal style="--d:.24s"><span class="s-no">STEP 04</span>
+                        <h4>Run</h4>
+                        <p>Deployment, monitoring, evals and a direct line to the builders while it settles in.</p><span
+                            class="wk">Ongoing</span>
+                    </div>
+                </div>
+                <div class="stack" data-reveal>
+                    <span>LLM orchestration</span><span>RAG &amp; vector stores</span><span>Browser
+                        automation</span><span>Tool
+                        calling</span><span>Evals</span><span>Observability</span><span>Queues &amp;
+                        cron</span><span>APIs &amp; webhooks</span><span>Human-in-the-loop</span>
+                </div>
+            </div>
+            <div class="stat-grid" data-reveal style="margin-top:46px;max-width:620px;margin-left:auto;margin-right:auto">
+                <div class="stat"><strong>4–6 wks</strong><span>avg build ship</span></div>
+                <div class="stat"><strong>48 hrs</strong><span>quote turnaround</span></div>
+                <div class="stat"><strong>100%</strong><span>human-in-the-loop</span></div>
+            </div>
+            <div class="faq">
+                <p class="eyebrow" style="justify-content:center" data-reveal>Questions, answered</p>
+                <div class="faq-item" data-reveal><button class="faq-q">How do you price a project?<span
+                            class="fx">+</span></button>
+                    <div class="faq-a">
+                        <p>Fixed-scope builds with a clear quote within 48 hours of the first call. No hourly meters, no
+                            surprise invoices. Ongoing care is a simple monthly retainer.</p>
+                    </div>
+                </div>
+                <div class="faq-item" data-reveal><button class="faq-q">How long does a typical build take?<span
+                            class="fx">+</span></button>
+                    <div class="faq-a">
+                        <p>Most first systems ship in 4–6 weeks: one week of discovery, one of design, the rest building
+                            in weekly increments you can watch run.</p>
+                    </div>
+                </div>
+                <div class="faq-item" data-reveal><button class="faq-q">Is our data safe with AI in the loop?<span
+                            class="fx">+</span></button>
+                    <div class="faq-a">
+                        <p>Yes. We design guardrails first: scoped permissions, human-in-the-loop approvals for critical
+                            actions, audit trails on everything, and your data stays inside systems you control.</p>
+                    </div>
+                </div>
+                <div class="faq-item" data-reveal><button class="faq-q">We already use a chatbot. Is that AI?<span
+                            class="fx">+</span></button>
+                    <div class="faq-a">
+                        <p>A chatbot is a doorway. We build the rooms behind it — agents wired into your real workflows,
+                            databases and tools, so work actually gets done, not just answered.</p>
+                    </div>
+                </div>
+                <div class="faq-item" data-reveal><button class="faq-q">What if AI shouldn't touch our problem?<span
+                            class="fx">+</span></button>
+                    <div class="faq-a">
+                        <p>Then we'll say so on the first call and point you to a simpler fix. We sell working
+                            solutions, not AI for its own sake — that honesty is the whole brand.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="cta-band">
+            <h2 class="h2" data-reveal>Ready to begin? <em>So are we.</em></h2>
+            <div class="ctas" data-reveal style="--d:.1s"><a class="btn-dark" href="#/contact">Start a project →</a><a
+                    class="btn-line" href="#/work">See our work</a></div>
+        </div>
+    </section>
+
+    <!-- ==================== WORK ==================== -->
+    <section class="page" id="page-work">
+        <div class="pagehead wrap">
+            <p class="eyebrow" style="justify-content:center" data-reveal>Selected builds</p>
+            <h1 class="h1" data-reveal style="--d:.08s">The work came <em>before the name.</em></h1>
+            <p class="lede" data-reveal style="--d:.16s">Aadi is new. The building isn't. These systems were built
+                before the agency existed — and are the reason it does.</p>
+        </div>
+        <div class="wrap">
+            <article class="case" data-reveal>
+                <div class="case-visual">
+                    <div class="big">01</div>
+                    <div class="cap">Multi-agent system</div>
+                    <svg width="120" height="60" viewBox="0 0 120 60" fill="none">
+                        <circle cx="15" cy="45" r="5" stroke="currentColor" />
+                        <circle cx="60" cy="15" r="5" stroke="currentColor" />
+                        <circle cx="105" cy="45" r="5" stroke="currentColor" />
+                        <path d="M19 41 L56 19 M64 19 L101 41 M20 45 L100 45" stroke="currentColor"
+                            stroke-dasharray="2 5" />
+                    </svg>
+                </div>
+                <div>
+                    <h3>The Application Engine</h3>
+                    <p class="tagline">A fleet of agents that applies while you sleep.</p>
+                    <p><strong>Problem.</strong> Hours of daily manual work: finding opportunities, tailoring documents,
+                        completing forms, tracking outcomes — repeated every single day.</p>
+                    <p><strong>Build.</strong> A coordinated multi-agent system: one agent discovers opportunities, one
+                        tailors each application to context, one completes the forms through browser automation, and an
+                        evaluator tracks every outcome and learns from it.</p>
+                    <div class="stat-grid">
+                        <div class="stat"><strong>4 hrs → 90 s</strong><span>manual work per run</span></div>
+                        <div class="stat"><strong>100%</strong><span>outcomes tracked</span></div>
+                        <div class="stat"><strong>1</strong><span>supervised run / day</span></div>
+                    </div>
+                    <ul class="chips" style="margin-top:22px">
+                        <li>Agent orchestration</li>
+                        <li>Browser automation</li>
+                        <li>Evaluation loops</li>
+                    </ul>
+                </div>
+            </article>
+            <article class="case" data-reveal>
+                <div class="case-visual">
+                    <div class="big">02</div>
+                    <div class="cap">Signal &amp; automation</div>
+                    <svg width="120" height="60" viewBox="0 0 120 60" fill="none">
+                        <path d="M5 45 L25 30 L45 38 L65 15 L85 26 L115 8" stroke="currentColor" />
+                        <circle cx="65" cy="15" r="4" fill="#e08b2d" />
+                    </svg>
+                </div>
+                <div>
+                    <h3>The Signal Engine</h3>
+                    <p class="tagline">Discipline, running at machine speed.</p>
+                    <p><strong>Problem.</strong> Manual chart review is slow, tiring and inconsistent — signals missed
+                        the moment attention drifts.</p>
+                    <p><strong>Build.</strong> A custom indicator that reads live market data, applies disciplined
+                        rule-based logic and emits structured signals with a full audit trail — continuous, calm
+                        observation instead of manual review.</p>
+                    <div class="stat-grid">
+                        <div class="stat"><strong>24 / 7</strong><span>continuous observation</span></div>
+                        <div class="stat"><strong>0</strong><span>fatigue-driven misses</span></div>
+                        <div class="stat"><strong>100%</strong><span>auditable signals</span></div>
+                    </div>
+                    <ul class="chips" style="margin-top:22px">
+                        <li>Real-time pipelines</li>
+                        <li>Rule engine</li>
+                        <li>Alerting</li>
+                    </ul>
+                </div>
+            </article>
+            <div class="index" data-reveal>
+                <a href="#/services"><span>AI agents for intake &amp; triage</span><b>→</b></a>
+                <a href="#/services"><span>Document extraction pipelines</span><b>→</b></a>
+                <a href="#/services"><span>Reporting &amp; summarisation copilots</span><b>→</b></a>
+                <a href="#/services"><span>Browser automation fleets</span><b>→</b></a>
+                <a href="#/services"><span>Internal dashboards &amp; control rooms</span><b>→</b></a>
+                <a href="#/services"><span>CRM / ERP / inbox integration</span><b>→</b></a>
+            </div>
+        </div>
+        <div class="sec" style="padding-top:0">
+            <div class="wrap agent-band">
+                <div>
+                    <p class="eyebrow" data-reveal>Live system trace</p>
+                    <h2 class="h2" data-reveal style="--d:.08s">Watch the engine <em>run the work.</em></h2>
+                    <p class="lede" data-reveal style="--d:.16s">The same agent graph behind Build 01, end to end —
+                        discover, draft, act, then evaluate every outcome. Four hours of manual intake, collapsed to
+                        ninety seconds, with a human still in the loop on the one exception.</p>
+                </div>
+                <div class="console" data-reveal style="--d:.2s" aria-label="Live agent trace">
+                    <div class="console-bar"><i></i><i></i><i></i><span>aadi-agent — trace</span><span
+                            class="live">RUNNING</span></div>
+                    <div class="console-body" id="consoleBodyWork"></div>
+                </div>
+            </div>
+        </div>
+        <div class="cta-band">
+            <h2 class="h2" data-reveal>Your workflow could be <em>Build 03.</em></h2>
+            <div class="ctas" data-reveal style="--d:.1s"><a class="btn-dark" href="#/contact">Start a project →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== ABOUT ==================== -->
+    <section class="page" id="page-about">
+        <div class="pagehead wrap">
+            <p class="eyebrow" style="justify-content:center" data-reveal>About Aadi</p>
+            <h1 class="h1" data-reveal style="--d:.08s">A young team, <em>an old idea.</em></h1>
+            <p class="lede" data-reveal style="--d:.16s">Aadi is Sanskrit for "the first, the beginning, the origin." We
+                named the company after the oldest truth we know: every age begins with someone building the first
+                version of something.</p>
+        </div>
+        <div class="wrap">
+            <div class="story-grid">
+                <figure class="story-img" data-reveal>
+                    <img src="https://image.qwenlm.ai/public_source/e1a49741-7d1c-4ca7-a2b9-da3f4d5eb399/1e44ae43d-c837-4618-9394-92bae5cbb2f5.png"
+                        alt="Three founders at a drafting table, pointing at a star" loading="lazy">
+                    <figcaption>Fig. 01 — The founders, planning the next leap</figcaption>
+                </figure>
+                <div>
+                    <p class="eyebrow" data-reveal>Our story</p>
+                    <h2 class="h2" data-reveal style="--d:.08s">Student-founded in Kadapa. <em>Building for
+                            everywhere.</em></h2>
+                    <p class="lede" data-reveal style="--d:.16s">We kept solving the same problem for everyone we met —
+                        repetitive work eating the hours that should go into thinking. So we made it the company.</p>
+                    <p class="lede" data-reveal style="--d:.24s">Kadapa's name comes from "Gadapa" — the threshold, the
+                        gateway. It felt right to begin a company about beginnings at a place named after one.</p>
+                </div>
+            </div>
+        </div>
+        <div class="sec mark-band">
+            <div class="wrap mark-stage">
+                <p class="eyebrow" style="justify-content:center" data-reveal>Our mark</p>
+                <h2 class="h2" data-reveal style="--d:.08s">The first spark, <em>drawn simply.</em></h2>
+                <svg class="mark-big" data-reveal style="--d:.16s">
+                    <use href="#aadiMark" />
+                </svg>
+                <div class="meanings">
+                    <div class="meaning" data-reveal>
+                        <svg class="m-ic" viewBox="0 0 44 44" fill="none">
+                            <circle cx="22" cy="22" r="5" fill="#e08b2d" />
+                            <path
+                                d="M22 6 L22 12 M22 32 L22 38 M6 22 L12 22 M32 22 L38 22 M11 11 L15 15 M29 29 L33 33 M33 11 L29 15 M15 29 L11 33"
+                                stroke="#e08b2d" stroke-width="1.6" stroke-linecap="round" />
+                        </svg>
+                        <h4>The Bindu</h4>
+                        <p>The saffron point is the bindu — in Sanskrit thought, the point at which creation begins.
+                            Aadi's spark: the first idea, the first line of code, the first solution.</p>
+                    </div>
+                    <div class="meaning" data-reveal style="--d:.1s">
+                        <svg class="m-ic" viewBox="0 0 44 44" fill="none">
+                            <path d="M22 8 L10 38 M22 8 L34 38 M15 28 L29 28" stroke="currentColor" stroke-width="3"
+                                stroke-linecap="round" />
+                        </svg>
+                        <h4>The A</h4>
+                        <p>A single stroked "A" — for Aadi, and for the apex: the upright posture, the first stance of
+                            intelligence, drawn with the confidence of a hand-tool.</p>
+                    </div>
+                    <div class="meaning" data-reveal style="--d:.2s">
+                        <svg class="m-ic" viewBox="0 0 44 44" fill="none">
+                            <path d="M6 30 Q22 22 38 30" stroke="#e08b2d" stroke-width="2" stroke-linecap="round" />
+                            <circle cx="38" cy="30" r="3" fill="#e08b2d" />
+                        </svg>
+                        <h4>The Arc</h4>
+                        <p>The horizon line beneath — the journey from the first spark to the first thought machine,
+                            with a traveller at its leading edge. Always moving forward.</p>
+                    </div>
+                </div>
+                <div class="variants">
+                    <div class="variant" data-reveal><svg class="v-mark">
+                            <use href="#aadiMark" />
+                        </svg><span class="v-label">The Mark</span></div>
+                    <div class="variant" data-reveal style="--d:.1s">
+                        <div class="v-word"><svg class="mark">
+                                <use href="#aadiMark" />
+                            </svg><span>Aadi</span></div><span class="v-label">The Wordmark</span>
+                    </div>
+                    <div class="variant" data-reveal style="--d:.2s">
+                        <svg class="v-seal" viewBox="0 0 110 110" fill="none">
+                            <circle cx="55" cy="55" r="52" stroke="currentColor" stroke-width="1.4" />
+                            <circle cx="55" cy="55" r="44" stroke="currentColor" stroke-width=".7"
+                                stroke-dasharray="1 4" />
+                            <g transform="translate(33,26) scale(0.92)">
+                                <use href="#aadiMark" />
+                            </g>
+                            <text x="55" y="92" text-anchor="middle" font-family="JetBrains Mono, monospace"
+                                font-size="9" letter-spacing="4" fill="currentColor">AADI</text>
+                        </svg>
+                        <span class="v-label">The Seal · MMXXV</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="wrap">
+            <div class="values">
+                <div class="value" data-reveal><b>VALUE 01</b>
+                    <h4>Ship working software</h4>
+                    <p>The deliverable is a system that runs inside your operation — not a deck about one.</p>
+                </div>
+                <div class="value" data-reveal style="--d:.1s"><b>VALUE 02</b>
+                    <h4>Honesty before revenue</h4>
+                    <p>If AI shouldn't touch your problem, we say so on the first call and point to a simpler fix.</p>
+                </div>
+                <div class="value" data-reveal style="--d:.2s"><b>VALUE 03</b>
+                    <h4>Begin properly</h4>
+                    <p>Surgical scope: automate the one workflow that matters most, prove it, then scale.</p>
+                </div>
+                </div>
+                <div class="stat-grid" data-reveal style="margin-top:46px;max-width:620px;margin-left:auto;margin-right:auto">
+                    <div class="stat"><strong>3</strong><span>founder-builders</span></div>
+                    <div class="stat"><strong>2025</strong><span>founded · Kadapa</span></div>
+                    <div class="stat"><strong>24 hr</strong><span>first reply</span></div>
+                </div>
+                <p class="eyebrow" style="margin-top:90px" data-reveal>The team</p>
+            <h2 class="h2" data-reveal style="--d:.08s">The people you talk to <em>are the people who build.</em></h2>
+            <div class="members">
+                <article class="member" data-reveal>
+                    <div class="member-mark">K</div>
+                    <h3>Karthikeya</h3>
+                    <p class="role">Founder · AI Systems</p>
+                    <p class="bio">Designs the agents. Owns the architecture. Ships.</p>
+                </article>
+                <article class="member" data-reveal style="--d:.1s">
+                    <div class="member-mark">G</div>
+                    <h3>Giridhar</h3>
+                    <p class="role">Co-founder · Engineering</p>
+                    <p class="bio">Builds the pipelines and infrastructure that hold everything together.</p>
+                </article>
+                <article class="member" data-reveal style="--d:.2s">
+                    <div class="member-mark">V</div>
+                    <h3>Varshitha</h3>
+                    <p class="role">Co-founder · Product &amp; Ops</p>
+                    <p class="bio">Keeps the work sharp, the process clean and the clients close.</p>
+                </article>
+            </div>
+        </div>
+        <div class="cta-band">
+            <h2 class="h2" data-reveal>Write the next plate <em>with us.</em></h2>
+            <div class="ctas" data-reveal style="--d:.1s"><a class="btn-dark" href="#/contact">Start a project →</a><a
+                    class="btn-line" href="#/journey">Walk the journey</a></div>
+        </div>
+    </section>
+
+    <!-- ==================== CONTACT ==================== -->
+    <section class="page" id="page-contact">
+        <div class="pagehead wrap">
+            <p class="eyebrow" style="justify-content:center" data-reveal>Start a project</p>
+            <h1 class="h1" data-reveal style="--d:.08s">Every solution has <em>a beginning.</em></h1>
+            <p class="lede" data-reveal style="--d:.16s">Tell us the problem. We'll tell you honestly whether AI should
+                touch it — and exactly what we'd build.</p>
+        </div>
+        <div class="wrap" style="padding-bottom:120px">
+            <div class="contact-grid">
+                <div>
+                    <form id="contactForm" novalidate>
+                        <div class="field"><label for="fName">Name</label><input id="fName" type="text" required
+                                autocomplete="name" placeholder="Your name"></div>
+                        <div class="field"><label for="fMail">Work email</label><input id="fMail" type="email" required
+                                autocomplete="email" placeholder="you@company.com"></div>
+                        <div class="field"><label>Approximate budget</label>
+                            <div class="budget" id="budgetChips">
+                                <button type="button">₹ &lt; 1L</button><button type="button">₹ 1–5L</button><button
+                                    type="button">₹ 5–15L</button><button type="button">Not sure yet</button>
+                            </div>
+                        </div>
+                        <div class="field"><label for="fMsg">What are you trying to solve?</label><textarea id="fMsg"
+                                rows="4" required placeholder="The workflow, the bottleneck, the problem…"></textarea>
+                        </div>
+                        <button class="btn-dark" type="submit">Begin →</button>
+                    </form>
+                    <div class="form-done" id="formDone">
+                        <h3>Received.</h3>
+                        <p id="doneText">We'll reply within 24 hours — usually faster.<br>— Aadi</p>
+                    </div>
+                </div>
+                <div class="contact-side">
+                    <div class="c-item" data-reveal><b>Direct</b><a href="mailto:hello@aadi.build">hello@aadi.build</a>
+                    </div>
+                    <div class="c-item" data-reveal style="--d:.08s"><b>Based in</b>
+                        <p>Kadapa · Andhra Pradesh · India — building for everywhere.</p>
+                    </div>
+                    <div class="c-item" data-reveal style="--d:.16s"><b>Response time</b>
+                        <p>Within 24 hours. A quote within 48 hours of the first call.</p>
+                    </div>
+                    <div class="next-steps" data-reveal style="--d:.24s">
+                        <h4>What happens next</h4>
+                        <ol>
+                            <li><i>1</i>We reply and book a 30-minute discovery call.</li>
+                            <li><i>2</i>We map one workflow and quote a fixed scope.</li>
+                            <li><i>3</i>If it makes sense, we begin. If not, we'll say so.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="wrap">
+            <div class="foot">
+                <div>
+                    <a class="brand" href="#/home" data-nav="home"><svg class="mark">
+                            <use href="#aadiMark" />
+                        </svg><span class="wm">Aadi</span></a>
+                    <p class="foot-tag">Where the next age begins.</p>
+                </div>
+                <nav class="foot-nav">
+                    <a href="#/home" data-nav="home">Home</a>
+                    <a href="#/journey" data-nav="journey">The Journey</a>
+                    <a href="#/services" data-nav="services">Services</a>
+                    <a href="#/work" data-nav="work">Work</a>
+                    <a href="#/about" data-nav="about">About</a>
+                    <a href="#/contact" data-nav="contact">Contact</a>
+                </nav>
+            </div>
+            <div class="foot-base">
+                <span>© 2025 Aadi · Built at the beginning of the age of intelligence</span>
+                <span><a href="https://www.linkedin.com" target="_blank" rel="noopener">LinkedIn ↗</a> &nbsp;·&nbsp; <a
+                        href="https://x.com" target="_blank" rel="noopener">X ↗</a> &nbsp;·&nbsp; <a
+                        href="mailto:hello@aadi.build">hello@aadi.build</a></span>
+            </div>
+        </div>
+    </footer>
+
+    <button id="chatBtn" aria-label="Ask Aadi">
+        <svg viewBox="0 0 48 48" fill="none">
+            <path d="M24 4 L27 21 L44 24 L27 27 L24 44 L21 27 L4 24 L21 21 Z" fill="currentColor" />
+        </svg>
+    </button>
+    <div id="chatPanel" role="dialog" aria-label="Ask Aadi chat">
+        <div class="chat-head"><svg class="mark">
+                <use href="#aadiMark" />
+            </svg><b>Ask Aadi</b><span class="dot"></span></div>
+        <div class="chat-msgs" id="chatMsgs"></div>
+        <div class="chat-chips" id="chatChips">
+            <button data-q="What do you build?">What do you build?</button>
+            <button data-q="How do you price?">Pricing?</button>
+            <button data-q="Who is behind Aadi?">Who are you?</button>
+            <button data-q="Why the name Aadi?">Why “Aadi”?</button>
+        </div>
+        <div class="chat-input">
+            <input id="chatInput" type="text" placeholder="Ask anything…" autocomplete="off">
+            <button id="chatSend" aria-label="Send">→</button>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            "use strict";
+            var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            /* ============ ROUTER ============ */
+            var PAGES = { home: 'Aadi — Where the Next Age Begins', journey: 'Aadi — The Journey of Intelligence', services: 'Aadi — Custom AI Agents & Automation', work: 'Aadi — Selected Builds', about: 'Aadi — The Team & The Mark', contact: 'Aadi — Start a Project' };
+            var currentPage = 'home';
+            function parseHash() {
+                var h = (location.hash || '').replace(/^#\/?/, '');
+                var parts = h.split('?');
+                return { page: PAGES[parts[0]] ? parts[0] : 'home', q: new URLSearchParams(parts[1] || '') };
+            }
+            function closeMenu() { document.body.classList.remove('menu-open'); }
+            function showPage(name, q) {
+                currentPage = name;
+                Object.keys(PAGES).forEach(function (p) { var el = document.getElementById('page-' + p); if (el) { el.classList.toggle('active', p === name); } });
+                document.querySelectorAll('[data-nav]').forEach(function (a) { a.classList.toggle('active', a.getAttribute('data-nav') === name); });
+                document.title = PAGES[name];
+                closeMenu();
+                window.scrollTo(0, 0);
+                bindReveals(document.getElementById('page-' + name));
+                if (name === 'home') { handleHero(); }
+                if (name === 'journey' && q && q.get('n')) {
+                    var target = q.get('n');
+                    setTimeout(function () {
+                        var el = document.getElementById(target);
+                        if (el) {
+                            el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+                            el.classList.add('pulse'); setTimeout(function () { el.classList.remove('pulse'); }, 2600);
+                        }
+                    }, 200);
+                }
+                consoles.forEach(function (c) { c.stop(); });
+                if (!reduced) {
+                    if (name === 'home' && consoles[0]) consoles[0].start();
+                    if (name === 'work' && consoles[1]) consoles[1].start();
+                }
+            }
+            window.addEventListener('hashchange', function () { var r = parseHash(); showPage(r.page, r.q); });
+            document.getElementById('burger').addEventListener('click', function () { document.body.classList.toggle('menu-open'); });
+
+            /* ============ MEGA MENUS ============ */
+            document.querySelectorAll('.mm').forEach(function (mm) {
+                var ot, ct;
+                function open() { clearTimeout(ct); ot = setTimeout(function () { mm.classList.add('open'); }, 150); }
+                function close() { clearTimeout(ot); ct = setTimeout(function () { mm.classList.remove('open'); }, 300); }
+                mm.addEventListener('mouseenter', open);
+                mm.addEventListener('mouseleave', close);
+                var t = mm.querySelector('.mm-trigger');
+                t.addEventListener('focus', open);
+                t.addEventListener('click', function () { mm.classList.toggle('open'); });
+                mm.addEventListener('focusout', function (e) { if (!mm.contains(e.relatedTarget)) { close(); } });
+                mm.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { mm.classList.remove('open'); }); });
+            });
+            document.querySelectorAll('.acc-btn').forEach(function (b) {
+                b.addEventListener('click', function () {
+                    var acc = b.parentElement, body = acc.querySelector('.acc-body');
+                    var open = acc.classList.toggle('open');
+                    body.style.maxHeight = open ? body.scrollHeight + 'px' : '0px';
+                });
+            });
+
+            /* ============ REVEALS ============ */
+            var io = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }); }, { threshold: 0.1 });
+            function bindReveals(root) { if (!root) return; root.querySelectorAll('[data-reveal]:not(.in)').forEach(function (el) { io.observe(el); }); }
+
+            /* ============ NAV SCROLL ============ */
+            var nav = document.getElementById('nav');
+            window.addEventListener('scroll', function () { nav.classList.toggle('scrolled', window.scrollY > 30); }, { passive: true });
+
+            /* ============ HERO CINEMA ============ */
+            var hero = document.getElementById('hero'), heroStarted = false, heroPlayed = false;
+            function handleHero() {
+                if (reduced) { hero.classList.add('done', 'static'); return; }
+                if (!heroStarted) {
+                    heroStarted = true;
+                    setTimeout(function () { heroPlayed = true; hero.classList.add('done'); }, 10600);
+                } else if (heroPlayed) {
+                    hero.classList.add('done');
+                }
+            }
+
+            /* ============ SLIDER-CRANK MECHANISM (scene 4, JS-driven for accuracy) ============ */
+            var wheelG = document.getElementById('wheelG'), rodLine = document.getElementById('rodLine'), pistonG = document.getElementById('pistonG'), pinC = document.getElementById('pinC');
+            var CX = 70, CY = 100, CR = 20, ROD = 52, PISTON_BASE = 120;
+            function mechTick(t) {
+                if (currentPage === 'home' && !reduced && wheelG) {
+                    var th = t / 1000 * 2.4;
+                    var px0 = CX + CR * Math.cos(th), py0 = CY + CR * Math.sin(th);
+                    var dy = py0 - CY;
+                    var dx = Math.sqrt(Math.max(ROD * ROD - dy * dy, 1));
+                    var px = px0 + dx;
+                    wheelG.setAttribute('transform', 'rotate(' + (th * 57.2958).toFixed(2) + ' ' + CX + ' ' + CY + ')');
+                    pinC.setAttribute('cx', px0.toFixed(2)); pinC.setAttribute('cy', py0.toFixed(2));
+                    rodLine.setAttribute('x1', px0.toFixed(2)); rodLine.setAttribute('y1', py0.toFixed(2));
+                    rodLine.setAttribute('x2', px.toFixed(2)); rodLine.setAttribute('y2', CY);
+                    pistonG.setAttribute('transform', 'translate(' + (px - PISTON_BASE).toFixed(2) + ' 0)');
+                }
+                window.requestAnimationFrame(mechTick);
+            }
+            window.requestAnimationFrame(mechTick);
+
+            /* ============ MARQUEE ============ */
+            var mt = document.getElementById('marqueeTrack');
+            mt.innerHTML += mt.innerHTML;
+
+            /* ============ CONSOLE ============ */
+            function makeConsole(body, lines) {
+                if (!body) return null;
+                var timers = [], line = 0, ch = 0, el = null;
+                function stop() { timers.forEach(clearTimeout); timers = []; el = null; }
+                function typeChar() {
+                    var L = lines[line];
+                    ch++;
+                    el.textContent = L.t.slice(0, ch);
+                    if (ch < L.t.length) { timers.push(setTimeout(typeChar, 14)); }
+                    else { el.classList.remove('typing'); line++; ch = 0; timers.push(setTimeout(typeNext, 420)); }
+                }
+                function typeNext() {
+                    if (line >= lines.length) { timers.push(setTimeout(start, 4600)); return; }
+                    var L = lines[line];
+                    el = document.createElement('div'); el.className = L.c + ' typing'; body.appendChild(el);
+                    typeChar();
+                }
+                function start() { stop(); body.innerHTML = ''; line = 0; ch = 0; typeNext(); }
+                return { start: start, stop: stop };
+            }
+            var consoles = [
+                makeConsole(document.getElementById('consoleBody'), [
+                    { t: '▸ aadi-agent v0.9 — mission: invoice-intake', c: 'cl-cmd' },
+                    { t: '  reading 43 email threads … done', c: '' },
+                    { t: '  extracting line items → 14 fields', c: '' },
+                    { t: '  matching vendor master … 3/3 matched', c: '' },
+                    { t: '  anomaly: PO mismatch → escalated to human', c: 'cl-warn' },
+                    { t: '✓ workflow complete · 9 min → 40 sec', c: 'cl-ok' }
+                ]),
+                makeConsole(document.getElementById('consoleBodyWork'), [
+                    { t: '▸ build: application-engine — agent graph', c: 'cl-cmd' },
+                    { t: '  [discover]   scan opportunities … 12 found', c: '' },
+                    { t: '  [draft]      tailor each application … 12 done', c: '' },
+                    { t: '  [act]        submit via browser … 12 / 12', c: '' },
+                    { t: '  [eval]       verify outcomes … 11 passed', c: '' },
+                    { t: '✓ throughput · 4 hrs → 90 sec per run', c: 'cl-ok' }
+                ])
+            ].filter(Boolean);
+
+            /* ============ MIND MAP TAP ============ */
+            document.querySelectorAll('.mcard').forEach(function (card) {
+                card.addEventListener('click', function () { card.closest('.mnode').classList.toggle('open'); });
+            });
+
+            /* ============ FAQ ============ */
+            document.querySelectorAll('.faq-item').forEach(function (item) {
+                var q = item.querySelector('.faq-q'), a = item.querySelector('.faq-a');
+                q.addEventListener('click', function () {
+                    var open = item.classList.toggle('open');
+                    a.style.maxHeight = open ? a.scrollHeight + 'px' : '0px';
+                });
+            });
+
+            /* ============ BUDGET ============ */
+            var budgetVal = '';
+            document.querySelectorAll('#budgetChips button').forEach(function (b) {
+                b.addEventListener('click', function () {
+                    document.querySelectorAll('#budgetChips button').forEach(function (x) { x.classList.remove('sel'); });
+                    b.classList.add('sel'); budgetVal = b.textContent.trim();
+                });
+            });
+
+            /* ============ FORM ============ */
+            var form = document.getElementById('contactForm'), doneBox = document.getElementById('formDone');
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var ok = true;
+                ['fName', 'fMail', 'fMsg'].forEach(function (id) {
+                    var el = document.getElementById(id);
+                    var valid = el.value.trim().length > 0;
+                    if (id === 'fMail') { valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim()); }
+                    el.style.borderColor = valid ? '' : '#b3402e';
+                    if (!valid) ok = false;
+                });
+                if (!ok) return;
+                var nm = document.getElementById('fName').value.trim().split(' ')[0];
+                document.getElementById('doneText').innerHTML = 'Thank you, ' + nm + '. We\u2019ll reply within 24 hours' + (budgetVal ? ' about a ' + budgetVal + ' engagement' : '') + '.<br>— Aadi';
+                form.style.display = 'none'; doneBox.classList.add('show');
+            });
+
+            /* ============ CHAT ============ */
+            var chatBtn = document.getElementById('chatBtn'), chatPanel = document.getElementById('chatPanel'), chatMsgs = document.getElementById('chatMsgs'), chatInput = document.getElementById('chatInput');
+            var ANSWERS = [
+                { k: ['price', 'cost', 'charge', 'budget', 'pricing'], a: 'Fixed-scope builds, quoted within 48 hours of a first call — no hourly meters. Tell us the problem and we\u2019ll be exact.' },
+                { k: ['build', 'service', 'agent', 'automat', 'what do you'], a: 'We build custom AI agents, workflow automation, internal tools and integrations — plugged directly into how your business works. Not generic chatbots.' },
+                { k: ['journey', 'story', 'why aadi', 'name mean', 'aadi mean'], a: 'Aadi is Sanskrit for \u201cthe beginning\u201d. The Journey page maps seven leaps of intelligence as a mind-map — fire to writing to cities to machines to networks to AI… to us.' },
+                { k: ['team', 'who', 'founder', 'karthikeya', 'giridhar', 'varshitha', 'behind'], a: 'Three builder-founders — Karthikeya, Giridhar and Varshitha. Student-founded in Kadapa, India. The people you talk to are the people who build.' },
+                { k: ['contact', 'email', 'reach', 'call', 'talk'], a: 'Write to hello@aadi.build or use the Contact page. We reply within 24 hours — usually faster.' },
+                { k: ['hello', 'hi', 'hey', 'namaste'], a: 'Namaste! Ask me what we build, how we price, or where we come from.' }
+            ];
+            function addMsg(text, who) {
+                var m = document.createElement('div'); m.className = 'msg ' + who; m.textContent = text;
+                chatMsgs.appendChild(m); chatMsgs.scrollTop = chatMsgs.scrollHeight; return m;
+            }
+            function botReply(q) {
+                var t = addMsg('', 'bot typing'); t.innerHTML = '<i></i><i></i><i></i>';
+                var low = q.toLowerCase(), hit = null;
+                for (var i = 0; i < ANSWERS.length; i++) { for (var j = 0; j < ANSWERS[i].k.length; j++) { if (low.indexOf(ANSWERS[i].k[j]) > -1) { hit = ANSWERS[i].a; break; } } if (hit) break; }
+                var reply = hit || 'Good question. The shortest answer: we plug AI directly into how you work. Try asking about services, pricing, or our story.';
+                setTimeout(function () { t.remove(); addMsg(reply, 'bot'); }, 900 + Math.random() * 500);
+            }
+            function sendChat(text) {
+                if (!text.trim()) return;
+                addMsg(text, 'user');
+                setTimeout(function () { botReply(text); }, 250);
+            }
+            chatBtn.addEventListener('click', function () {
+                chatPanel.classList.toggle('open');
+                if (chatPanel.classList.contains('open') && !chatMsgs.children.length) {
+                    setTimeout(function () { addMsg('Namaste! I\u2019m Aadi\u2019s resident agent. Ask me what we build, how we price, or where we come from.', 'bot'); }, 350);
+                }
+            });
+            document.getElementById('chatSend').addEventListener('click', function () { sendChat(chatInput.value); chatInput.value = ''; });
+            chatInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') { sendChat(chatInput.value); chatInput.value = ''; } });
+            document.querySelectorAll('#chatChips button').forEach(function (b) { b.addEventListener('click', function () { sendChat(b.getAttribute('data-q')); }); });
+
+            /* ============ MAGNETIC CTAs ============ */
+            if (!reduced) {
+                document.querySelectorAll('.btn-dark').forEach(function (btn) {
+                    btn.style.willChange = 'transform';
+                    btn.addEventListener('mousemove', function (e) {
+                        var r = btn.getBoundingClientRect();
+                        var x = e.clientX - (r.left + r.width / 2);
+                        var y = e.clientY - (r.top + r.height / 2);
+                        var mx = Math.max(-40, Math.min(40, x * 0.35));
+                        var my = Math.max(-22, Math.min(22, y * 0.35));
+                        btn.style.transform = 'translate(' + mx + 'px,' + my + 'px)';
+                    });
+                    btn.addEventListener('mouseleave', function () { btn.style.transform = ''; });
+                });
+            }
+
+            /* ============ INIT ============ */
+            var r0 = parseHash();
+            showPage(r0.page, r0.q);
+        })();
+    </script>
+</body>
+
+</html>
